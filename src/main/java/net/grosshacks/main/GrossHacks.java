@@ -38,7 +38,7 @@ public class GrossHacks implements ModInitializer {
         });
 
         FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container -> {
-            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks", "clean_buttons"), container, ResourcePackActivationType.NORMAL);
+            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"), container, ResourcePackActivationType.NORMAL);
         });
 
         LOGGER.info("Ahhh hell no");
@@ -46,7 +46,7 @@ public class GrossHacks implements ModInitializer {
 
     /*
     Gets a list of tridents with custom projectiles, runs on resource reload.
-    */
+     */
     public static void findProjectiles(ResourceManager manager) {
 
         projectileList.clear();
