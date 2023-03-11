@@ -38,7 +38,7 @@ public class GrossHacks implements ModInitializer {
         });
 
         FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container -> {
-            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks", "clean_buttons"), container, ResourcePackActivationType.NORMAL);
+            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"), container, ResourcePackActivationType.NORMAL);
         });
 
         LOGGER.info("Ahhh hell no");
@@ -51,11 +51,11 @@ public class GrossHacks implements ModInitializer {
 
         projectileList.clear();
 
-        manager.findResources("optifine", id -> id.getPath().endsWith("projectile.png")).keySet().forEach(id -> {
+        for (Identifier id : manager.findResources("optifine", id -> id.endsWith("projectile.png"))) {
             String name = Path.of(id.getPath()).getFileName().toString()
                     .replace("_projectile.png", "")
                     .replace("_", " ");
             projectileList.add(name);
-        });
+        }
     }
 }

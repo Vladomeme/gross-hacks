@@ -4,6 +4,7 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 public class GrossHacksConfigScreen {
@@ -17,7 +18,7 @@ public class GrossHacksConfigScreen {
                         .setSavingRunnable(currentConfig::write);
 
 
-                ConfigCategory category = builder.getOrCreateCategory(Text.empty());
+                ConfigCategory category = builder.getOrCreateCategory(new LiteralText(""));
                 ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable stats and charms buttons"), currentConfig.enable_extra_buttons)

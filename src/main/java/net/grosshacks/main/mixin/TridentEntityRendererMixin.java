@@ -55,7 +55,7 @@ public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentE
 
     /*
     Checks if trident has a projectile, and edits the name of the rendered item.
-     */
+    */
     public NbtCompound checkProjectile(NbtCompound tridentData) {
         String name = tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").getString("Name");
         GrossHacks.projectileList.forEach(proj -> {
