@@ -1,6 +1,5 @@
 package net.grosshacks.main.mixin;
 
-import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
 import net.grosshacks.main.util.ItemDataAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -24,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TridentEntityRenderer.class)
 public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentEntity> implements ItemDataAccessor {
 
-
     /*
     If trident should have a texture, cancels the code that renders the vanilla trident model and renders it as an item instead.
     */
@@ -36,14 +34,13 @@ public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentE
         if (GrossHacksConfig.INSTANCE.thrown_trident_texture && tridentItemData.contains("TridentItemData")
                 && tridentItemData.getCompound("TridentItemData").getCompound("tag").contains("plain")) {
 
-            if (GrossHacksConfig.INSTANCE.custom_trident_projectile) {
-                tridentItemData = checkProjectile(tridentItemData);
-            }
-
             matrixStack.push();
             matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.lerp(g, tridentEntity.prevYaw, tridentEntity.getYaw()) - 90.0f));
             matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.lerp(g, tridentEntity.prevPitch, tridentEntity.getPitch()) - 45.0f));
-            float tridentScale = GrossHacksConfig.INSTANCE.trident_size;
+            Float tridentScale = ((ItemDataAccessor) tridentEntity).getTridentScale();
+            if (tridentScale == null) {
+                tridentScale = GrossHacksConfig.INSTANCE.trident_size;
+            }
             matrixStack.translate(-0.5 * tridentScale, -0.5 * tridentScale, 0);
             matrixStack.scale(tridentScale, tridentScale, tridentScale);
 
@@ -54,26 +51,7 @@ public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentE
         }
     }
 
-    /*
-    Checks if trident has a projectile, and edits the name of the rendered item.
-    */
-    public NbtCompound checkProjectile(NbtCompound tridentData) {
-        String name = tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").getString("Name");
-        GrossHacks.projectileList.forEach(proj -> {
-            if (proj.equals(name.toLowerCase()
-                    .replace("(","")
-                    .replace(")","")
-                    .replace("-","")
-                    .replace("'",""))) {
-                tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").remove("Name");
-                tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").putString("Name", name + "_projectile");
-            }
-        });
-        return tridentData;
-    }
-
     protected TridentEntityRendererMixin(EntityRendererFactory.Context context) {
         super(context);
     }
 }
-

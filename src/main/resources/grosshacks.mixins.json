@@ -4,6 +4,9 @@
   "package": "net.grosshacks.main.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AxeItemMixin",
+    "HoeItemMixin",
+    "ShovelItemMixin",
     "InventoryScreenMixin",
     "MobSpawnerBlockEntityRendererMixin",
     "PlayerEntityMixin",

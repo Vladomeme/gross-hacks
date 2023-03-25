@@ -16,7 +16,6 @@ public class GrossHacksConfigScreen {
                         .setTitle(Text.of("Vlado's Gross Hacks"))
                         .setSavingRunnable(currentConfig::write);
 
-
                 ConfigCategory category = builder.getOrCreateCategory(Text.empty());
                 ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
@@ -37,15 +36,30 @@ public class GrossHacksConfigScreen {
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Custom trident projectiles"), currentConfig.custom_trident_projectile)
                         .setTooltip(Text.of("If there's a separate texture for trident projectile it will be\n" +
                                 "rendered instead. Instructions on how to add a projectile could be\n" +
-                                "found in mod file or on github."))
+                                "found in the mod file or on github."))
                         .setSaveConsumer(newConfig -> currentConfig.custom_trident_projectile = newConfig)
                         .setDefaultValue(defaultConfig.custom_trident_projectile)
                         .build());
 
-                category.addEntry(entryBuilder.startFloatField(Text.of("Trident size scaling"), currentConfig.trident_size)
+                category.addEntry(entryBuilder.startFloatField(Text.of("Overall trident size scaling"), currentConfig.trident_size)
                         .setTooltip(Text.of("Default - 1."))
                         .setSaveConsumer(newConfig -> currentConfig.trident_size = newConfig)
                         .setDefaultValue(defaultConfig.trident_size)
+                        .build());
+
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Trident size scaling per item"), currentConfig.per_trident_scaling)
+                        .setTooltip(Text.of("Enables size scaling for tridents depending on their name.\n" +
+                                "Instructions on how to set scaling for a trident could be found\n" +
+                                "in the mod file or on github."))
+                        .setSaveConsumer(newConfig -> currentConfig.per_trident_scaling = newConfig)
+                        .setDefaultValue(defaultConfig.per_trident_scaling)
+                        .build());
+
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable tool interactions"), currentConfig.remove_interactions)
+                        .setTooltip(Text.of("Disables special interactions with blocks when right\n" +
+                                "clicking with an axe/shovel/hoe"))
+                        .setSaveConsumer(newConfig -> currentConfig.remove_interactions = newConfig)
+                        .setDefaultValue(defaultConfig.remove_interactions)
                         .build());
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Hide entities in spawners"), currentConfig.break_spawners)
