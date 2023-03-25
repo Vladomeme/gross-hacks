@@ -1,5 +1,6 @@
 package net.grosshacks.main.mixin;
 
+import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
 import net.grosshacks.main.util.ItemDataAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -19,8 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class TridentEntityMixin extends PersistentProjectileEntity implements ItemDataAccessor {
 
     NbtCompound tridentItemData = new NbtCompound();
+    Float tridentScale;
     NbtCompound ownerNbt = new NbtCompound();
-    PlayerEntity nearestPlayer = null;
+    PlayerEntity nearestPlayer;
     PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
 
     protected TridentEntityMixin(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
@@ -62,23 +64,58 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
                     tridentItemData.put("TridentItemData", setTag(((ItemDataAccessor) MinecraftClient.getInstance().player).getLatestTridentData().getCompound("LatestTridentData")));
                 }
             }
+            if (GrossHacksConfig.INSTANCE.per_trident_scaling) {
+                setTridentScale();
+            }
         }
     }
 
     @Override
-    public NbtCompound getTridentItemData(){
+    public NbtCompound getTridentItemData() {
         if (!tridentItemData.getCompound("TridentItemData").contains("id")){
             tridentItemData.getCompound("TridentItemData").putString("id", "minecraft:trident");
             tridentItemData.getCompound("TridentItemData").putByte("Count", (byte) 1);
         }
+        if (GrossHacksConfig.INSTANCE.custom_trident_projectile) {
+            tridentItemData = checkProjectile(tridentItemData);
+        }
         return tridentItemData;
     }
 
-    public NbtCompound setTag(NbtCompound tridentPlainData){
+    @Override
+    public Float getTridentScale() {
+        return tridentScale;
+    }
+
+    public void setTridentScale() {
+        GrossHacks.tridentScales.forEach((name, scale)-> {
+            if (name.equals(tridentItemData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").getString("Name"))) {
+                tridentScale = scale;
+            }
+        });
+    }
+
+    public NbtCompound setTag(NbtCompound tridentPlainData) {
         NbtCompound tagCompound = new NbtCompound();
         tagCompound.put("tag", tridentPlainData);
         return tagCompound;
     }
+
+    /*
+    Checks if trident has a projectile, and edits the name of the rendered item.
+    */
+    public NbtCompound checkProjectile(NbtCompound tridentData) {
+        String name = tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").getString("Name");
+        GrossHacks.projectileList.forEach(proj -> {
+            if (proj.equals(name.toLowerCase()
+                    .replace("(","")
+                    .replace(")","")
+                    .replace("-","")
+                    .replace("'",""))) {
+                tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").remove("Name");
+                tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").putString("Name", name + "_projectile");
+            }
+        });
+        return tridentData;
+    }
 }
-
-

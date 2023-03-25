@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 //Stores the last trident held by player so the texture doesn't get lost if he quickly changes selected slot after throwing
 @Mixin(PlayerEntity.class)
-public class PlayerEntityMixin implements ItemDataAccessor {
+public abstract class PlayerEntityMixin implements ItemDataAccessor {
 
     NbtCompound latestTridentData = new NbtCompound();
 
@@ -23,11 +23,6 @@ public class PlayerEntityMixin implements ItemDataAccessor {
                 && MinecraftClient.getInstance().player.getInventory().getMainHandStack().getItem().toString().equals("trident")) {
             latestTridentData.put("LatestTridentData", MinecraftClient.getInstance().player.getInventory().getMainHandStack().getNbt());
         }
-    }
-
-    @Override
-    public NbtCompound getTridentItemData() {
-        return null;
     }
 
     @Override

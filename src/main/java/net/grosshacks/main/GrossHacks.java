@@ -12,14 +12,20 @@ import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GrossHacks implements ModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("grosshacks");
 
     public static ArrayList<String> projectileList = new ArrayList<>();
+    public static Map<String, Float> tridentScales = new HashMap<>();
 
     @Override
     public void onInitialize() {
@@ -34,11 +40,12 @@ public class GrossHacks implements ModInitializer {
             @Override
             public void reload(ResourceManager manager) {
                 findProjectiles(manager);
+                findScales(manager);
             }
         });
 
         FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container -> {
-            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks", "clean_buttons"), container, ResourcePackActivationType.NORMAL);
+            ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"), container, ResourcePackActivationType.NORMAL);
         });
 
         LOGGER.info("Ahhh hell no");
@@ -56,6 +63,25 @@ public class GrossHacks implements ModInitializer {
                     .replace("_projectile.png", "")
                     .replace("_", " ");
             projectileList.add(name);
+        });
+    }
+
+    public static void findScales(ResourceManager manager) {
+
+        tridentScales.clear();
+
+        manager.findResources("optifine", id -> id.getPath().endsWith("trident_scaling.txt")).keySet().forEach(id -> {
+            try {
+                String line;
+                BufferedReader reader = new BufferedReader(new InputStreamReader(manager.getResource(id).get().getInputStream()));
+
+                while ((line = reader.readLine()) != null) {
+                    String[] entry = line.split(":", 2);
+                    tridentScales.put(entry[0], Float.valueOf(entry[1]));
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("An error occured while trying to read "+id.getPath());
+            }
         });
     }
 }

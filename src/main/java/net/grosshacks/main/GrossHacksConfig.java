@@ -15,9 +15,11 @@ public class GrossHacksConfig {
     public boolean enable_extra_buttons = true;
     public boolean break_spawners = false;
     public boolean hide_handheld = false;
+    public boolean remove_interactions = false;
     public boolean thrown_trident_texture = true;
     public boolean custom_trident_projectile = true;
     public float trident_size = 1;
+    public boolean per_trident_scaling = true;
 
     private static final File FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "grosshacks.json");
 
