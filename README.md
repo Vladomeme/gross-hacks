@@ -1,7 +1,8 @@
 # Vlado's Gross Hacks
 ### Features:
-* Custom Item Textures for thrown tridents and an option to set custom projectiles
+* Custom Item Textures for thrown tridents with options to change projectile texture and size
 * Buttons in inventory to open player stats and charms menu
+* An option to disable tool interactions like log stripping
 * A bunch of small options that could help with performance
 
 ### Custom Projectiles Guide:
@@ -32,3 +33,13 @@ texture= the name of your texture file,
 Name= the name of the item + "_projectile".
 
 Of course you can add a model to properties or an .mcmeta if you need to.
+
+### Size Scaling:
+To change size of the tridents depending on their name, make a file named "trident_scaling.txt" anywhere in a resource pack under "optifine" namespace.
+
+#### EXAMPLE
+```    
+Highwatch Pike: 0.8
+Stormblessed Greatspear: 0.5
+Titan Spear: 37.8
+```    
