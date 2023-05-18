@@ -64,11 +64,11 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.remove_interactions)
                         .build());
 
-                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Hide entities in spawners"), currentConfig.break_spawners)
-                        .setTooltip(Text.of("Hides the spinny mobs in spawners. Helps with performance,\n" +
-                                "especially in spawner heavy areas like Quelled Convent."))
-                        .setSaveConsumer(newConfig -> currentConfig.break_spawners = newConfig)
-                        .setDefaultValue(defaultConfig.break_spawners)
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Spawner entity culling"), currentConfig.spawner_culling)
+                        .setTooltip(Text.of("Hides the spinny mobs in inactive spawners. Helps with\n" +
+                                "performance in spawner heavy areas."))
+                        .setSaveConsumer(newConfig -> currentConfig.spawner_culling = newConfig)
+                        .setDefaultValue(defaultConfig.spawner_culling)
                         .build());
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Hide handheld items on players"), currentConfig.hide_handheld)
