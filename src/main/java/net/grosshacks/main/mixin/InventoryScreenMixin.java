@@ -30,11 +30,11 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 		if(GrossHacksConfig.INSTANCE.enable_extra_buttons) {
 			this.addDrawableChild(statsButton = new TexturedButtonWidget(this.x + 126, this.height / 2 - 22, 20, 18, 0, 0, 19,
 					new Identifier("grosshacks", "textures/stats_button.png"), button -> {
-				MinecraftClient.getInstance().getNetworkHandler().sendCommand("ps");
+				MinecraftClient.getInstance().player.sendCommand("ps");
 			}));
 			this.addDrawableChild(charmsButton = new TexturedButtonWidget(this.x + 148, this.height / 2 - 22, 20, 18, 0, 0, 19,
 					new Identifier("grosshacks", "textures/charms_button.png"), button -> {
-				MinecraftClient.getInstance().getNetworkHandler().sendCommand("vc");
+				MinecraftClient.getInstance().player.sendCommand("vc");
 			}));
 		}
 	}

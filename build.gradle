@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.1-SNAPSHOT'
+	id 'fabric-loom' version '1.0-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -13,6 +13,10 @@ group = project.maven_group
 repositories {
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.terraformersmc.com/releases/" }
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/grosshacks.accesswidener")
 }
 
 dependencies {

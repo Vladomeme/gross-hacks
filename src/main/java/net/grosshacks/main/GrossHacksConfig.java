@@ -13,7 +13,7 @@ import java.io.Reader;
 public class GrossHacksConfig {
 
     public boolean enable_extra_buttons = true;
-    public boolean break_spawners = false;
+    public boolean spawner_culling = true;
     public boolean hide_handheld = false;
     public boolean remove_interactions = false;
     public boolean thrown_trident_texture = true;
