@@ -1,0 +1,2 @@
+accessWidener	v1	 named
+accessible method net/minecraft/world/MobSpawnerLogic isPlayerInRange (Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z
