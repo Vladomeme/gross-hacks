@@ -65,6 +65,13 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.remove_interactions)
                         .build());
 
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable unmounting"), currentConfig.disable_unmouting)
+                        .setTooltip(Text.of("Disables unmounting via sneaking. You can unmount\n" +
+                                "using a special changeable keybind (U by default.)"))
+                        .setSaveConsumer(newConfig -> currentConfig.disable_unmouting = newConfig)
+                        .setDefaultValue(defaultConfig.disable_unmouting)
+                        .build());
+
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Spawner entity culling"), currentConfig.spawner_culling)
                         .setTooltip(Text.of("Hides the spinny mobs in inactive spawners. Helps with\n" +
                                 "performance in spawner heavy areas."))
