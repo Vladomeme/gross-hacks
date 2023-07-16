@@ -6,9 +6,6 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GrossHacksConfigScreen {
         public static Screen create(Screen parent) {
 
@@ -63,6 +60,13 @@ public class GrossHacksConfigScreen {
                                 "clicking with an axe/shovel/hoe"))
                         .setSaveConsumer(newConfig -> currentConfig.remove_interactions = newConfig)
                         .setDefaultValue(defaultConfig.remove_interactions)
+                        .build());
+
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable unmounting"), currentConfig.disable_unmouting)
+                        .setTooltip(Text.of("Disables unmounting via sneaking. You can unmount\n" +
+                                "using a special changeable keybind (U by default.)"))
+                        .setSaveConsumer(newConfig -> currentConfig.disable_unmouting = newConfig)
+                        .setDefaultValue(defaultConfig.disable_unmouting)
                         .build());
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Spawner entity culling"), currentConfig.spawner_culling)
