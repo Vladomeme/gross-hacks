@@ -1,16 +1,21 @@
 package net.grosshacks.main;
 
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.fabricmc.api.ModInitializer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,15 +25,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GrossHacks implements ModInitializer {
+@Environment(EnvType.CLIENT)
+public class GrossHacks implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("grosshacks");
 
     public static ArrayList<String> projectileList = new ArrayList<>();
     public static Map<String, Float> tridentScales = new HashMap<>();
 
+    public static KeyBinding unmountKey;
+
     @Override
-    public void onInitialize() {
+    public void onInitializeClient() {
 
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 
@@ -47,6 +55,8 @@ public class GrossHacks implements ModInitializer {
         FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container -> {
             ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks", "clean_buttons"), container, ResourcePackActivationType.NORMAL);
         });
+
+        unmountKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Unmount", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "Vlado's Gross Hacks"));
 
         LOGGER.info("Ahhh hell no");
     }

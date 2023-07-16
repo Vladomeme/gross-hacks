@@ -6,16 +6,19 @@
   "mixins": [
     "AxeItemMixin",
     "HoeItemMixin",
-    "ShovelItemMixin",
     "InventoryScreenMixin",
     "MobSpawnerBlockEntityRendererMixin",
     "PlayerEntityMixin",
     "PlayerHeldItemFeatureRendererMixin",
     "RecipeBookWidgetMixin",
+    "ShovelItemMixin",
     "TridentEntityMixin",
     "TridentEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "KeyboardInputMixin"
+  ]
 }
