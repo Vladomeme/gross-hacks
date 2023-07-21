@@ -30,8 +30,8 @@ public class GrossHacks implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("grosshacks");
 
-    public static ArrayList<String> projectileList = new ArrayList<>();
-    public static Map<String, Float> tridentScales = new HashMap<>();
+    public static final ArrayList<String> projectileList = new ArrayList<>();
+    public static final Map<String, Float> tridentScales = new HashMap<>();
 
     public static KeyBinding unmountKey;
 
