@@ -16,6 +16,7 @@ public class GrossHacksConfig {
     public boolean spawner_culling = true;
     public boolean hide_handheld = false;
     public boolean remove_interactions = false;
+    public boolean fix_mount_desync = true;
     public boolean disable_unmouting = false;
     public boolean thrown_trident_texture = true;
     public boolean custom_trident_projectile = true;

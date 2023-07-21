@@ -12,6 +12,7 @@ import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -19,10 +20,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TridentEntity.class)
 public abstract class TridentEntityMixin extends PersistentProjectileEntity implements ItemDataAccessor {
 
+    @Unique
     NbtCompound tridentItemData = new NbtCompound();
+    @Unique
     Float tridentScale;
-    NbtCompound ownerNbt = new NbtCompound();
+    @Unique
+    final NbtCompound ownerNbt = new NbtCompound();
+    @Unique
     PlayerEntity nearestPlayer;
+    @Unique
     PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
 
     protected TridentEntityMixin(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
@@ -87,6 +93,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
         return tridentScale;
     }
 
+    @Unique
     public void setTridentScale() {
         GrossHacks.tridentScales.forEach((name, scale)-> {
             if (name.equals(tridentItemData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").getString("Name"))) {
@@ -95,6 +102,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
         });
     }
 
+    @Unique
     public NbtCompound setTag(NbtCompound tridentPlainData) {
         NbtCompound tagCompound = new NbtCompound();
         tagCompound.put("tag", tridentPlainData);
@@ -104,6 +112,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
     /*
     Checks if trident has a projectile, and edits the name of the rendered item.
     */
+    @Unique
     public NbtCompound checkProjectile(NbtCompound tridentData) {
         String name = tridentData.getCompound("TridentItemData").getCompound("tag").getCompound("plain").getCompound("display").getString("Name");
         GrossHacks.projectileList.forEach(proj -> {

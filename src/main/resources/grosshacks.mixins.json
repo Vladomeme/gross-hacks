@@ -8,15 +8,16 @@
   },
   "client": [
     "AxeItemMixin",
+    "ClientPlayNetworkHandlerMixin",
     "HoeItemMixin",
     "InventoryScreenMixin",
+    "KeyboardInputMixin",
     "MobSpawnerBlockEntityRendererMixin",
     "PlayerEntityMixin",
     "PlayerHeldItemFeatureRendererMixin",
     "RecipeBookWidgetMixin",
     "ShovelItemMixin",
     "TridentEntityMixin",
-    "TridentEntityRendererMixin",
-    "KeyboardInputMixin"
+    "TridentEntityRendererMixin"
   ]
 }

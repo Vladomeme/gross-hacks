@@ -6,6 +6,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -14,6 +16,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin implements ItemDataAccessor {
 
+    @Shadow protected abstract boolean shouldDismount();
+
+    @Unique
+    final
     NbtCompound latestTridentData = new NbtCompound();
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
@@ -29,6 +35,5 @@ public abstract class PlayerEntityMixin implements ItemDataAccessor {
     public NbtCompound getLatestTridentData(){
         return latestTridentData;
     }
+
 }
-
-
