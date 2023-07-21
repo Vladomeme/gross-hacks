@@ -3,20 +3,21 @@
   "minVersion": "0.8",
   "package": "net.grosshacks.main.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
     "AxeItemMixin",
+    "ClientPlayNetworkHandlerMixin",
     "HoeItemMixin",
     "InventoryScreenMixin",
+    "KeyboardInputMixin",
     "MobSpawnerBlockEntityRendererMixin",
     "PlayerEntityMixin",
     "PlayerHeldItemFeatureRendererMixin",
     "RecipeBookWidgetMixin",
     "ShovelItemMixin",
     "TridentEntityMixin",
-    "TridentEntityRendererMixin",
-    "KeyboardInputMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "TridentEntityRendererMixin"
+  ]
 }

@@ -6,9 +6,6 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GrossHacksConfigScreen {
         public static Screen create(Screen parent) {
 
@@ -63,6 +60,13 @@ public class GrossHacksConfigScreen {
                                 "clicking with an axe/shovel/hoe"))
                         .setSaveConsumer(newConfig -> currentConfig.remove_interactions = newConfig)
                         .setDefaultValue(defaultConfig.remove_interactions)
+                        .build());
+
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Fix mount desync"), currentConfig.fix_mount_desync)
+                        .setTooltip(Text.of("Fixes desync when server tells client to dismount\n" +
+                                "without actually dismounting you server side"))
+                        .setSaveConsumer(newConfig -> currentConfig.fix_mount_desync = newConfig)
+                        .setDefaultValue(defaultConfig.fix_mount_desync)
                         .build());
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable unmounting"), currentConfig.disable_unmouting)
