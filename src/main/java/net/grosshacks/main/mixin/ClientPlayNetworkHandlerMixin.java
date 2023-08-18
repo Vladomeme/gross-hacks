@@ -1,9 +1,12 @@
 package net.grosshacks.main.mixin;
 
+import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -11,27 +14,34 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin {
 
-    @Redirect(method = "onPlayerPositionLook", at = @At(value = "INVOKE",
-              target = "Lnet/minecraft/entity/player/PlayerEntity;dismountVehicle()V"))
-    private void dismountVehicle(PlayerEntity instance) {
-        if (MinecraftClient.getInstance().player != null) {
-            if (GrossHacksConfig.INSTANCE.fix_mount_desync) {
-                if (MinecraftClient.getInstance().player.isSneaking()) instance.dismountVehicle();
+    @Redirect(method = "onEntityPassengersSet", at = @At(value = "INVOKE",
+            target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;)V"))
+    private void onEntityPassengersSet$warn(Logger instance, String s) {
+        if (GrossHacksConfig.INSTANCE.clean_logs) return;
+        GrossHacks.LOGGER.warn("Received passengers for unknown entity");
+    }
+
+    @Redirect(method = "onEntityPassengersSet", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/entity/Entity;removeAllPassengers()V"))
+    private void onEntityPassengersSet$removeAllPassengers(Entity instance) {
+        if (GrossHacksConfig.INSTANCE.fix_mount_desync) {
+            if (instance.hasPassengerDeep(MinecraftClient.getInstance().player)) {
+                if (MinecraftClient.getInstance().player.isSneaking() || GrossHacks.shouldDismount || GrossHacks.unmountKey.isPressed()) {
+                    instance.removeAllPassengers();
+                    GrossHacks.shouldDismount = false;
+                    return;
+                }
+                return;
             }
-            else instance.dismountVehicle();
         }
+        instance.removeAllPassengers();
     }
 
-    @Redirect(method = "onPlayerPositionLook", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/entity/player/PlayerEntity;setVelocity(DDD)V"))
-    private void setVelocity(PlayerEntity instance, double x, double y, double z) {
-        if (!(GrossHacksConfig.INSTANCE.fix_mount_desync && MinecraftClient.getInstance().player.hasVehicle())) instance.setVelocity(x, y, z);
-    }
-
-    @Redirect(method = "onPlayerPositionLook", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/entity/player/PlayerEntity;setPosition(DDD)V"))
-    private void setPosition(PlayerEntity instance, double x, double y, double z) {
-        if (!(GrossHacksConfig.INSTANCE.fix_mount_desync && MinecraftClient.getInstance().player.hasVehicle())) instance.setPosition(x, y, z);
+    @Redirect(method = "onTeam", at = @At(value = "INVOKE",
+            target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;[Ljava/lang/Object;)V"))
+    private void onTeam$warn(Logger instance, String s, Object[] objects) {
+        if (GrossHacksConfig.INSTANCE.clean_logs) return;
+        GrossHacks.LOGGER.warn("Received packet for unknown team {}: team action: {}, player action: {}", objects);
     }
 
     @Redirect(method = "onPlayerPositionLook", at = @At(value = "INVOKE",
@@ -46,4 +56,3 @@ public abstract class ClientPlayNetworkHandlerMixin {
         if (!(GrossHacksConfig.INSTANCE.fix_mount_desync && MinecraftClient.getInstance().player.hasVehicle())) instance.setYaw(v);
     }
 }
-

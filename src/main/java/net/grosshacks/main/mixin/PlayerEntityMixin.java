@@ -16,11 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin implements ItemDataAccessor {
 
-    @Shadow protected abstract boolean shouldDismount();
-
     @Unique
-    final
-    NbtCompound latestTridentData = new NbtCompound();
+    final NbtCompound latestTridentData = new NbtCompound();
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     private void tick(CallbackInfo ci) {

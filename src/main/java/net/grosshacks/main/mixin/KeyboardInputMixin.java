@@ -15,9 +15,15 @@ public abstract class KeyboardInputMixin extends Input {
 
     @Inject(method = "tick", at = @At(value = "TAIL"))
     private void tick(boolean slowDown, float f, CallbackInfo ci) {
-        if(GrossHacksConfig.INSTANCE.disable_unmouting) {
-            if (MinecraftClient.getInstance().player.hasVehicle()) this.sneaking = GrossHacks.unmountKey.wasPressed();
-            GrossHacks.unmountKey.reset();
+        if(GrossHacksConfig.INSTANCE.disable_dismouting) {
+            if (MinecraftClient.getInstance().player.hasVehicle()) {
+                this.sneaking = GrossHacks.unmountKey.wasPressed();
+                if (this.sneaking || GrossHacks.shouldDismount) GrossHacks.shouldDismount = true;
+            }
+            else {
+                GrossHacks.shouldDismount = false;
+                GrossHacks.unmountKey.reset();
+            }
         }
     }
 }

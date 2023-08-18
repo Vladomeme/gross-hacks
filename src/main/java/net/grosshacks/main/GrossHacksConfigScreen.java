@@ -16,7 +16,8 @@ public class GrossHacksConfigScreen {
                         .setTitle(Text.of("Vlado's Gross Hacks"))
                         .setSavingRunnable(currentConfig::write);
 
-                ConfigCategory category = builder.getOrCreateCategory(Text.empty());
+                //FEATURES
+                ConfigCategory category = builder.getOrCreateCategory(Text.of("Features"));
                 ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Enable stats and charms buttons"), currentConfig.enable_extra_buttons)
@@ -24,6 +25,13 @@ public class GrossHacksConfigScreen {
                                 "and stops recipe book button from opening stats."))
                         .setSaveConsumer(newConfig -> currentConfig.enable_extra_buttons = newConfig)
                         .setDefaultValue(defaultConfig.enable_extra_buttons)
+                        .build());
+
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable dismounting"), currentConfig.disable_dismouting)
+                        .setTooltip(Text.of("Disables dismounting via sneaking. You can dismount\n" +
+                                "using a special changeable keybind (U by default.)"))
+                        .setSaveConsumer(newConfig -> currentConfig.disable_dismouting = newConfig)
+                        .setDefaultValue(defaultConfig.disable_dismouting)
                         .build());
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Render custom texture on thrown tridents"), currentConfig.thrown_trident_texture)
@@ -55,6 +63,9 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.per_trident_scaling)
                         .build());
 
+                //FIXES
+                category = builder.getOrCreateCategory(Text.of("Fixes"));
+
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable tool interactions"), currentConfig.remove_interactions)
                         .setTooltip(Text.of("Disables special interactions with blocks when right\n" +
                                 "clicking with an axe/shovel/hoe"))
@@ -69,12 +80,16 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.fix_mount_desync)
                         .build());
 
-                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable unmounting"), currentConfig.disable_unmouting)
-                        .setTooltip(Text.of("Disables unmounting via sneaking. You can unmount\n" +
-                                "using a special changeable keybind (U by default.)"))
-                        .setSaveConsumer(newConfig -> currentConfig.disable_unmouting = newConfig)
-                        .setDefaultValue(defaultConfig.disable_unmouting)
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Remove log spam"), currentConfig.clean_logs)
+                        .setTooltip(Text.of("Removes logs like \"Received passengers for unknown entity\",\n" +
+                                "\"Received packet for unknown team\" and \"Cannot remove\n" +
+                                "from team\"."))
+                        .setSaveConsumer(newConfig -> currentConfig.clean_logs = newConfig)
+                        .setDefaultValue(defaultConfig.clean_logs)
                         .build());
+
+                //PERFORMANCE
+                category = builder.getOrCreateCategory(Text.of("Performance"));
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Spawner entity culling"), currentConfig.spawner_culling)
                         .setTooltip(Text.of("Hides the spinny mobs in inactive spawners. Helps with\n" +

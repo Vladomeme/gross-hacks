@@ -12,16 +12,22 @@ import java.io.Reader;
 
 public class GrossHacksConfig {
 
+    //FEATURES
     public boolean enable_extra_buttons = true;
-    public boolean spawner_culling = true;
-    public boolean hide_handheld = false;
-    public boolean remove_interactions = false;
-    public boolean fix_mount_desync = true;
-    public boolean disable_unmouting = false;
+    public boolean disable_dismouting = false;
     public boolean thrown_trident_texture = true;
     public boolean custom_trident_projectile = true;
     public float trident_size = 1;
     public boolean per_trident_scaling = true;
+
+    //FIXES
+    public boolean remove_interactions = false;
+    public boolean fix_mount_desync = true;
+    public boolean clean_logs = true;
+
+    //PERFORMANCE
+    public boolean spawner_culling = true;
+    public boolean hide_handheld = false;
 
     private static final File FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "grosshacks.json");
 

@@ -34,6 +34,7 @@ public class GrossHacks implements ClientModInitializer {
     public static final Map<String, Float> tridentScales = new HashMap<>();
 
     public static KeyBinding unmountKey;
+    public static boolean shouldDismount = false;
 
     @Override
     public void onInitializeClient() {

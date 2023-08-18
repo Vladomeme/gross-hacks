@@ -43,7 +43,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
             Getting the nearest player is a pretty reliable method, but perhaps not the most efficient.
              */
             if (this.getOwner() == null) {
-                nearestPlayer = this.world.getClosestPlayer(this, 10);
+                nearestPlayer = this.getWorld().getClosestPlayer(this, 10);
                 if(nearestPlayer != null) {
                     inventory = nearestPlayer.getInventory();
                 }

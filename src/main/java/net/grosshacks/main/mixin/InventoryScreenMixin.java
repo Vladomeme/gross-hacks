@@ -38,8 +38,8 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 	@Inject(method = "method_19891(Lnet/minecraft/client/gui/widget/ButtonWidget;)V", at = @At("TAIL"))
 	private void moveButtonWithRecipeBook(CallbackInfo ci) {
 		if(GrossHacksConfig.INSTANCE.enable_extra_buttons) {
-			this.statsButton.setPos(this.x + 126, this.height / 2 - 22);
-			this.charmsButton.setPos(this.x + 148, this.height / 2 - 22);
+			this.statsButton.setPosition(this.x + 126, this.height / 2 - 22);
+			this.charmsButton.setPosition(this.x + 148, this.height / 2 - 22);
 		}
 	}
 

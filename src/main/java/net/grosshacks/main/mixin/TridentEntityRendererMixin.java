@@ -8,7 +8,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.TridentEntityRenderer;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.item.ItemStack;
@@ -45,7 +45,7 @@ public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentE
             matrixStack.scale(tridentScale, tridentScale, tridentScale);
 
             MinecraftClient.getInstance().getItemRenderer().renderItem(ItemStack.fromNbt(tridentItemData.getCompound("TridentItemData")),
-                    ModelTransformation.Mode.GUI, getLight(tridentEntity, 1), OverlayTexture.DEFAULT_UV, matrixStack, vertexConsumerProvider, 0);
+                    ModelTransformationMode.GUI, getLight(tridentEntity, 1), OverlayTexture.DEFAULT_UV, matrixStack, vertexConsumerProvider, tridentEntity.getWorld(), 0);
             matrixStack.pop();
             ci.cancel();
         }

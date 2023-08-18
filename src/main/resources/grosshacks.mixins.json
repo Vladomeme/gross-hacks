@@ -16,6 +16,7 @@
     "PlayerEntityMixin",
     "PlayerHeldItemFeatureRendererMixin",
     "RecipeBookWidgetMixin",
+    "ScoreboardMixin",
     "ShovelItemMixin",
     "TridentEntityMixin",
     "TridentEntityRendererMixin"
