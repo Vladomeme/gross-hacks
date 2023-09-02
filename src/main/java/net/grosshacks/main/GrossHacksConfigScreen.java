@@ -80,6 +80,13 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.fix_mount_desync)
                         .build());
 
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Fix sign screens"), currentConfig.fix_sign_screens)
+                        .setTooltip(Text.of("Stops sign screens like Bag of Hoarding amount\n" +
+                                "input from instantly closing."))
+                        .setSaveConsumer(newConfig -> currentConfig.fix_sign_screens = newConfig)
+                        .setDefaultValue(defaultConfig.fix_sign_screens)
+                        .build());
+
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Remove log spam"), currentConfig.clean_logs)
                         .setTooltip(Text.of("Removes logs like \"Received passengers for unknown entity\",\n" +
                                 "\"Received packet for unknown team\" and \"Cannot remove\n" +

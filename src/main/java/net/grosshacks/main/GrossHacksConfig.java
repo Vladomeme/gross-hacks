@@ -23,6 +23,7 @@ public class GrossHacksConfig {
     //FIXES
     public boolean remove_interactions = false;
     public boolean fix_mount_desync = true;
+    public boolean fix_sign_screens = true;
     public boolean clean_logs = true;
 
     //PERFORMANCE
