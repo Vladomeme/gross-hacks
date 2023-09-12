@@ -28,6 +28,9 @@ public class GrossHacksConfig {
 
     //PERFORMANCE
     public boolean spawner_culling = true;
+    public int extra_range = 4;
+    public boolean range_mode = false;
+    public int range = 16;
     public boolean hide_handheld = false;
 
     private static final File FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "grosshacks.json");

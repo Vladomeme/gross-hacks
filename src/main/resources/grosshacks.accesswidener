@@ -1,3 +1,4 @@
 accessWidener	v1	 named
 accessible method net/minecraft/world/MobSpawnerLogic isPlayerInRange (Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z
 accessible method net/minecraft/client/option/KeyBinding reset ()V
+accessible field net/minecraft/world/MobSpawnerLogic requiredPlayerRange I

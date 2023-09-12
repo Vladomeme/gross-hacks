@@ -105,6 +105,26 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.spawner_culling)
                         .build());
 
+                category.addEntry(entryBuilder.startIntField(Text.of("Inactive render range"), currentConfig.extra_range)
+                        .setTooltip(Text.of("Additional distance on top of spawner's required player\n" +
+                                "range before its spinny entity disappears."))
+                        .setSaveConsumer(newConfig -> currentConfig.extra_range = newConfig)
+                        .setDefaultValue(defaultConfig.extra_range)
+                        .build());
+
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Range mode"), currentConfig.range_mode)
+                        .setTooltip(Text.of("Render all spawner entities in a set range."))
+                        .setSaveConsumer(newConfig -> currentConfig.range_mode = newConfig)
+                        .setDefaultValue(defaultConfig.range_mode)
+                        .build());
+
+                category.addEntry(entryBuilder.startIntField(Text.of("Range"), currentConfig.range)
+                        .setTooltip(Text.of("Range used with Range mode. Set to 0 to stop rendering the\n" +
+                                "spinning entities completely."))
+                        .setSaveConsumer(newConfig -> currentConfig.range = newConfig)
+                        .setDefaultValue(defaultConfig.range)
+                        .build());
+
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Hide handheld items on players"), currentConfig.hide_handheld)
                         .setTooltip(Text.of("Hides the handheld items on players. Could help with\n" +
                                 "performance. Also looks silly :)."))
