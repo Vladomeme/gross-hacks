@@ -24,17 +24,16 @@ public abstract class ClientPlayNetworkHandlerMixin {
     @Redirect(method = "onEntityPassengersSet", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/entity/Entity;removeAllPassengers()V"))
     private void onEntityPassengersSet$removeAllPassengers(Entity instance) {
-        if (GrossHacksConfig.INSTANCE.fix_mount_desync) {
-            if (instance.hasPassengerDeep(MinecraftClient.getInstance().player)) {
-                if (MinecraftClient.getInstance().player.isSneaking() || GrossHacks.shouldDismount || GrossHacks.unmountKey.isPressed()) {
-                    instance.removeAllPassengers();
-                    GrossHacks.shouldDismount = false;
-                    return;
-                }
-                return;
-            }
+        if (!GrossHacksConfig.INSTANCE.fix_mount_desync) {
+            instance.removeAllPassengers();
+            return;
         }
-        instance.removeAllPassengers();
+        if (!instance.hasPassengerDeep(MinecraftClient.getInstance().player)) return;
+
+        if (MinecraftClient.getInstance().player.isSneaking() || GrossHacks.shouldDismount || GrossHacks.unmountKey.isPressed()) {
+            instance.removeAllPassengers();
+            GrossHacks.shouldDismount = false;
+        }
     }
 
     @Redirect(method = "onTeam", at = @At(value = "INVOKE",

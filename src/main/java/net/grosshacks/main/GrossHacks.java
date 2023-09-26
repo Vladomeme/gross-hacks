@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,6 +36,8 @@ public class GrossHacks implements ClientModInitializer {
 
     public static KeyBinding unmountKey;
     public static boolean shouldDismount = false;
+
+    static int nightmareTicks = 1200;
 
     @Override
     public void onInitializeClient() {
@@ -92,5 +95,17 @@ public class GrossHacks implements ClientModInitializer {
                 throw new RuntimeException("An error occured while trying to read "+id.getPath());
             }
         });
+    }
+
+    public static void setTicks(int ticks) {
+        nightmareTicks = ticks;
+    }
+
+    public static int getTicks() {
+        return nightmareTicks;
+    }
+
+    public static void tick() {
+        if (nightmareTicks > 0) nightmareTicks--;
     }
 }

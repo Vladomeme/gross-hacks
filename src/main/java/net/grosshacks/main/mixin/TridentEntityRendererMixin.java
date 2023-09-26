@@ -23,9 +23,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TridentEntityRenderer.class)
 public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentEntity> implements ItemDataAccessor {
 
-    /*
-    If trident should have a texture, cancels the code that renders the vanilla trident model and renders it as an item instead.
-    */
     @Inject(method = "render(Lnet/minecraft/entity/projectile/TridentEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At(value = "HEAD"), cancellable = true)
     private void render(TridentEntity tridentEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
@@ -37,10 +34,9 @@ public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentE
             matrixStack.push();
             matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(MathHelper.lerp(g, tridentEntity.prevYaw, tridentEntity.getYaw()) - 90.0f));
             matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.lerp(g, tridentEntity.prevPitch, tridentEntity.getPitch()) - 45.0f));
+
             Float tridentScale = ((ItemDataAccessor) tridentEntity).getTridentScale();
-            if (tridentScale == null) {
-                tridentScale = GrossHacksConfig.INSTANCE.trident_size;
-            }
+            if (tridentScale == null) tridentScale = GrossHacksConfig.INSTANCE.trident_size;
             matrixStack.translate(-0.5 * tridentScale, -0.5 * tridentScale, 0);
             matrixStack.scale(tridentScale, tridentScale, tridentScale);
 

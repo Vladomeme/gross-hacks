@@ -34,6 +34,13 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.disable_dismouting)
                         .build());
 
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Offhand shift-clicking"), currentConfig.offhand_equip)
+                        .setTooltip(Text.of("Allows you to shift click any items with offhand stats into\n" +
+                                "the offhand slot."))
+                        .setSaveConsumer(newConfig -> currentConfig.offhand_equip = newConfig)
+                        .setDefaultValue(defaultConfig.offhand_equip)
+                        .build());
+
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Render custom texture on thrown tridents"), currentConfig.thrown_trident_texture)
                         .setTooltip(Text.of("Changes thrown tridents to use a corresponding custom texture.\n" +
                                 "Extra hacky and may tank performance"))
@@ -63,6 +70,18 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.per_trident_scaling)
                         .build());
 
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Gallery nightmare timer"), currentConfig.nightmare_timer)
+                        .setTooltip(Text.of("Shows approximate time left before nightmares arrive in gallery."))
+                        .setSaveConsumer(newConfig -> currentConfig.nightmare_timer = newConfig)
+                        .setDefaultValue(defaultConfig.nightmare_timer)
+                        .build());
+
+                category.addEntry(entryBuilder.startIntField(Text.of("Time until nightmares"), currentConfig.time_remaining)
+                        .setTooltip(Text.of("Timer shows up if you have equal or less time left (in seconds)."))
+                        .setSaveConsumer(newConfig -> currentConfig.time_remaining = newConfig)
+                        .setDefaultValue(defaultConfig.time_remaining)
+                        .build());
+
                 //FIXES
                 category = builder.getOrCreateCategory(Text.of("Fixes"));
 
@@ -85,6 +104,12 @@ public class GrossHacksConfigScreen {
                                 "input from instantly closing."))
                         .setSaveConsumer(newConfig -> currentConfig.fix_sign_screens = newConfig)
                         .setDefaultValue(defaultConfig.fix_sign_screens)
+                        .build());
+
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Mute goat horns"), currentConfig.mute_horns)
+                        .setTooltip(Text.of("Mutes goat horns and displays who used one."))
+                        .setSaveConsumer(newConfig -> currentConfig.mute_horns = newConfig)
+                        .setDefaultValue(defaultConfig.mute_horns)
                         .build());
 
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Remove log spam"), currentConfig.clean_logs)

@@ -1,5 +1,6 @@
 package net.grosshacks.main.mixin;
 
+import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.MinecraftClient;

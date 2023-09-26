@@ -22,9 +22,8 @@ public abstract class ScoreboardMixin {
 
     @Inject(method = "removePlayerFromTeam", at = @At(value = "HEAD"), cancellable = true)
     private void removePlayerFromTeam(String playerName, Team team, CallbackInfo ci) {
-        if (!GrossHacksConfig.INSTANCE.clean_logs && this.getPlayerTeam(playerName) != team) {
+        if (!GrossHacksConfig.INSTANCE.clean_logs && this.getPlayerTeam(playerName) != team)
             throw new IllegalStateException("Player is either on another team or not on any team. Cannot remove from team '" + team.getName() + "'.");
-        }
         this.teamsByPlayer.remove(playerName);
         team.getPlayerList().remove(playerName);
         ci.cancel();

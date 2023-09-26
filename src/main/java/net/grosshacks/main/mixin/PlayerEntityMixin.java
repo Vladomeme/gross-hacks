@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//Stores the last trident held by player so the texture doesn't get lost if he quickly changes selected slot after throwing
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin implements ItemDataAccessor {
 

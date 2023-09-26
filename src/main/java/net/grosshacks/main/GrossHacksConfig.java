@@ -15,15 +15,19 @@ public class GrossHacksConfig {
     //FEATURES
     public boolean enable_extra_buttons = true;
     public boolean disable_dismouting = false;
+    public boolean offhand_equip = true;
     public boolean thrown_trident_texture = true;
     public boolean custom_trident_projectile = true;
     public float trident_size = 1;
     public boolean per_trident_scaling = true;
+    public boolean nightmare_timer = true;
+    public int time_remaining = 60;
 
     //FIXES
     public boolean remove_interactions = false;
     public boolean fix_mount_desync = true;
     public boolean fix_sign_screens = true;
+    public boolean mute_horns = true;
     public boolean clean_logs = true;
 
     //PERFORMANCE

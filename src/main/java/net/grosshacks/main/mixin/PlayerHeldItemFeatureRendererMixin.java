@@ -19,8 +19,7 @@ public class PlayerHeldItemFeatureRendererMixin {
 
 	@Inject(method = "renderItem", cancellable = true, at = @At(value = "HEAD"))
 	private void renderItem(LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-		if(GrossHacksConfig.INSTANCE.hide_handheld && !entity.equals(MinecraftClient.getInstance().player)){
+		if (GrossHacksConfig.INSTANCE.hide_handheld && !entity.equals(MinecraftClient.getInstance().player))
 			ci.cancel();
-		}
 	}
 }

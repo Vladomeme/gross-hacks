@@ -14,8 +14,7 @@ public abstract class ShovelItemMixin {
 
 	@Inject(method = "useOnBlock", at = @At(value = "HEAD"), cancellable = true)
 	private void useOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-		if (GrossHacksConfig.INSTANCE.remove_interactions) {
+		if (GrossHacksConfig.INSTANCE.remove_interactions)
 			cir.setReturnValue(ActionResult.PASS);
-		}
 	}
 }

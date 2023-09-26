@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InventoryScreen.class)
@@ -27,7 +28,7 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 	@Inject(method = "init", at = @At(value = "INVOKE",
 			target="Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;"))
 	private void init(CallbackInfo ci) {
-		if(GrossHacksConfig.INSTANCE.enable_extra_buttons) {
+		if (GrossHacksConfig.INSTANCE.enable_extra_buttons) {
 			this.addDrawableChild(statsButton = new TexturedButtonWidget(this.x + 126, this.height / 2 - 22, 20, 18, 0, 0, 19,
 					new Identifier("grosshacks", "textures/stats_button.png"), button -> MinecraftClient.getInstance().getNetworkHandler().sendCommand("ps")));
 			this.addDrawableChild(charmsButton = new TexturedButtonWidget(this.x + 148, this.height / 2 - 22, 20, 18, 0, 0, 19,
@@ -37,7 +38,7 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 
 	@Inject(method = "method_19891(Lnet/minecraft/client/gui/widget/ButtonWidget;)V", at = @At("TAIL"))
 	private void moveButtonWithRecipeBook(CallbackInfo ci) {
-		if(GrossHacksConfig.INSTANCE.enable_extra_buttons) {
+		if (GrossHacksConfig.INSTANCE.enable_extra_buttons) {
 			this.statsButton.setPosition(this.x + 126, this.height / 2 - 22);
 			this.charmsButton.setPosition(this.x + 148, this.height / 2 - 22);
 		}
