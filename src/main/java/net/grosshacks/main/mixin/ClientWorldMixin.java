@@ -42,7 +42,7 @@ public class ClientWorldMixin {
 	@Inject(method = "tick", at = @At(value = "HEAD"))
 	private void tick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
 		if (GrossHacksConfig.INSTANCE.nightmare_timer &&
-				MinecraftClient.getInstance().player.getWorld().getRegistryKey().getValue().toString().endsWith("gallery")) {
+				MinecraftClient.getInstance().player.getWorld().getRegistryKey().getValue().toString().startsWith("gallery")) {
 			GrossHacks.tick();
 			if (GrossHacks.getTicks() / 20 <= GrossHacksConfig.INSTANCE.time_remaining) {
 				MinecraftClient.getInstance().inGameHud.setOverlayMessage(
