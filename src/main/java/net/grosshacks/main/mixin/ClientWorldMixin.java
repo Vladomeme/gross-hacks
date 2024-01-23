@@ -22,8 +22,9 @@ import java.util.function.BooleanSupplier;
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {
 
-	@Inject(method = "playSoundFromEntity", at = @At(value = "HEAD"))
-	private void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, RegistryEntry<SoundEvent> sound, SoundCategory category, float volume, float pitch, long seed, CallbackInfo ci) {
+	@Inject(method = "playSoundFromEntity", at = @At(value = "HEAD"), cancellable = true)
+	private void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, RegistryEntry<SoundEvent> sound,
+									 SoundCategory category, float volume, float pitch, long seed, CallbackInfo ci) {
 		if (GrossHacksConfig.INSTANCE.mute_horns) {
 			for (RegistryEntry.Reference<SoundEvent> soundEvent : SoundEvents.GOAT_HORN_SOUNDS) {
 				if (sound.matchesKey(soundEvent.registryKey())) {
@@ -33,7 +34,7 @@ public class ClientWorldMixin {
 									Text.of("§e" + player.getEntityName() + " just used a goat horn!"), false);
 						}
 					}
-					return;
+					ci.cancel();
 				}
 			}
 		}

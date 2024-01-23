@@ -1,17 +1,29 @@
 package net.grosshacks.main;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -24,18 +36,26 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 @Environment(EnvType.CLIENT)
 public class GrossHacks implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("grosshacks");
+    private static final MinecraftClient client = MinecraftClient.getInstance();
 
     public static final ArrayList<String> projectileList = new ArrayList<>();
     public static final Map<String, Float> tridentScales = new HashMap<>();
 
     public static KeyBinding unmountKey;
     public static boolean shouldDismount = false;
+
+    private static final List<String> chats = List.of("g", "l", "wc", "tr", "lfg", "gc");
 
     static int nightmareTicks = 1200;
 
@@ -56,11 +76,29 @@ public class GrossHacks implements ClientModInitializer {
             }
         });
 
-        FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container -> ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"), container, ResourcePackActivationType.NORMAL));
+        FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container ->
+                ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"),
+                        container, ResourcePackActivationType.NORMAL));
 
         unmountKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Unmount", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "Vlado's Gross Hacks"));
 
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
+                literal("show").executes(ctx -> show(null))
+                        .then(argument("chat", StringArgumentType.string())
+                                        .suggests(this::getSuggestions).executes(ctx ->
+                                        show(StringArgumentType.getString(ctx, "chat"))))
+        ));
+
         LOGGER.info("Ahhh hell no");
+    }
+
+    private static int show(String chat) {
+        ClientPlayerEntity player = client.player;
+        if (player == null) return 1;
+
+        if (chat == null) player.networkHandler.sendChatMessage("<mainhand>");
+        else player.networkHandler.sendCommand(chat + " <mainhand>");
+        return 1;
     }
 
     /*
@@ -107,5 +145,10 @@ public class GrossHacks implements ClientModInitializer {
 
     public static void tick() {
         if (nightmareTicks > 0) nightmareTicks--;
+    }
+
+    private CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
+        for (String chat : chats) builder.suggest(chat);
+        return builder.buildFuture();
     }
 }
