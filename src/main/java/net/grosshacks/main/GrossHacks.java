@@ -1,6 +1,5 @@
 package net.grosshacks.main;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
@@ -10,25 +9,24 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
+import net.grosshacks.main.util.ChatBlocker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -74,6 +72,10 @@ public class GrossHacks implements ClientModInitializer {
                 findProjectiles(manager);
                 findScales(manager);
             }
+        });
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player != null) tick();
         });
 
         FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container ->
@@ -144,7 +146,16 @@ public class GrossHacks implements ClientModInitializer {
     }
 
     public static void tick() {
-        if (nightmareTicks > 0) nightmareTicks--;
+        if (GrossHacksConfig.INSTANCE.nightmare_timer &&
+                client.player.getWorld().getRegistryKey().getValue().toString().endsWith("gallery")) {
+            if (nightmareTicks > 0) nightmareTicks--;
+            if (GrossHacks.getTicks() / 20 <= GrossHacksConfig.INSTANCE.time_remaining) {
+                client.inGameHud.setOverlayMessage(
+                        Text.of("§3Nightmares arrive in: " + (GrossHacks.getTicks() / 20)), false);
+            }
+        }
+        if (((ChatBlocker) client.inGameHud.getChatHud()).isBlocked())
+            ((ChatBlocker) client.inGameHud.getChatHud()).unblockChat();
     }
 
     private CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {

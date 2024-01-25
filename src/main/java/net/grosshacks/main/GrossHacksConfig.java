@@ -27,6 +27,7 @@ public class GrossHacksConfig {
     public boolean remove_interactions = false;
     public boolean fix_mount_desync = true;
     public boolean mute_horns = true;
+    public boolean undelete = false;
     public boolean clean_logs = true;
 
     //PERFORMANCE

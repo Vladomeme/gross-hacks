@@ -1,6 +1,5 @@
 package net.grosshacks.main.mixin;
 
-import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -16,8 +15,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.function.BooleanSupplier;
 
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {
@@ -36,18 +33,6 @@ public class ClientWorldMixin {
 					}
 					ci.cancel();
 				}
-			}
-		}
-	}
-
-	@Inject(method = "tick", at = @At(value = "HEAD"))
-	private void tick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-		if (GrossHacksConfig.INSTANCE.nightmare_timer &&
-				MinecraftClient.getInstance().player.getWorld().getRegistryKey().getValue().toString().endsWith("gallery")) {
-			GrossHacks.tick();
-			if (GrossHacks.getTicks() / 20 <= GrossHacksConfig.INSTANCE.time_remaining) {
-				MinecraftClient.getInstance().inGameHud.setOverlayMessage(
-						Text.of("§3Nightmares arrive in: " + (GrossHacks.getTicks() / 20)), false);
 			}
 		}
 	}

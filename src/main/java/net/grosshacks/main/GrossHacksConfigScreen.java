@@ -105,6 +105,12 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.mute_horns)
                         .build());
 
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Keep deleted messages"), currentConfig.undelete)
+                        .setTooltip(Text.of("Marks deleted messages instead of hiding them."))
+                        .setSaveConsumer(newConfig -> currentConfig.undelete = newConfig)
+                        .setDefaultValue(defaultConfig.undelete)
+                        .build());
+
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Remove log spam"), currentConfig.clean_logs)
                         .setTooltip(Text.of("Removes logs like \"Received passengers for unknown entity\",\n" +
                                 "\"Received packet for unknown team\" and \"Cannot remove\n" +
