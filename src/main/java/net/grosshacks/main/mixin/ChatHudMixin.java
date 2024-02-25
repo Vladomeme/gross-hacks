@@ -1,6 +1,5 @@
 package net.grosshacks.main.mixin;
 
-import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
 import net.grosshacks.main.util.ChatBlocker;
 import net.minecraft.client.gui.hud.ChatHud;
@@ -20,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Mixin(ChatHud.class)
@@ -83,7 +81,8 @@ public abstract class ChatHudMixin implements ChatBlocker {
 		chatBlocked = false;
 		addMessage(message);
 		chatBlocked = true;
-		messageHistory.remove(messageHistory.size() - 1);
+		if (!messageHistory.isEmpty())
+			messageHistory.remove(messageHistory.size() - 1);
 	}
 
 	@Unique

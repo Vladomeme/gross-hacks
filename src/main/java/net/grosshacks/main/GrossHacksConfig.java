@@ -14,6 +14,7 @@ public class GrossHacksConfig {
 
     //FEATURES
     public boolean enable_extra_buttons = true;
+    public boolean dynamic_textures = true;
     public boolean disable_dismouting = false;
     public boolean offhand_equip = true;
     public boolean thrown_trident_texture = true;

@@ -19,6 +19,9 @@ import net.grosshacks.main.util.ChatBlocker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
@@ -28,9 +31,11 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,6 +58,9 @@ public class GrossHacks implements ClientModInitializer {
     public static KeyBinding unmountKey;
     public static boolean shouldDismount = false;
 
+    public static Identifier stats;
+    public static Identifier charms;
+
     private static final List<String> chats = List.of("g", "l", "wc", "tr", "lfg", "gc");
 
     static int nightmareTicks = 1200;
@@ -71,6 +79,9 @@ public class GrossHacks implements ClientModInitializer {
             public void reload(ResourceManager manager) {
                 findProjectiles(manager);
                 findScales(manager);
+                stats = null;
+                charms = null;
+                if (GrossHacksConfig.INSTANCE.dynamic_textures) generateButtons(manager);
             }
         });
 
@@ -82,7 +93,7 @@ public class GrossHacks implements ClientModInitializer {
                 ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"),
                         container, ResourcePackActivationType.NORMAL));
 
-        unmountKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Unmount", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "Vlado's Gross Hacks"));
+        unmountKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Dismount", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "Vlado's Gross Hacks"));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
                 literal("show").executes(ctx -> show(null))
@@ -135,6 +146,52 @@ public class GrossHacks implements ClientModInitializer {
                 throw new RuntimeException("An error occured while trying to read "+id.getPath());
             }
         });
+    }
+
+    public static void generateButtons(ResourceManager rm) {
+        TextureManager tm = MinecraftClient.getInstance().getTextureManager();
+        try {
+            BufferedImage source = ImageIO.read(rm.getResource(new Identifier("minecraft", "textures/gui/recipe_button.png")).get().getInputStream());
+            BufferedImage image = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D ctx = image.createGraphics();
+            ctx.drawImage(source, 0, 0, null);
+
+            //inactive empty
+            Color color = new Color(image.getRGB(2, 2), true);
+            ctx.setBackground(new Color(0, 0, 0, 0));
+            ctx.clearRect(2, 2, 16, 14);
+            ctx.setColor(color);
+            ctx.fillRect(2, 2, 16, 14);
+            //hovered empty
+            color = new Color(image.getRGB(2, 21), true);
+            ctx.clearRect(2, 21, 16, 14);
+            ctx.setColor(color);
+            ctx.fillRect(2, 21, 16, 14);
+
+            //make a copy
+            BufferedImage imageCopy = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D ctxCopy = imageCopy.createGraphics();
+            ctxCopy.drawImage(image, 0, 0, null);
+
+            //charms
+            ctx.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/charms_button_clean.png"))
+                    .get().getInputStream()), 0, 0, null);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", os);
+            charms = tm.registerDynamicTexture("charms",
+                    new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
+
+            //stats
+            ctxCopy.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/stats_button_clean.png"))
+                    .get().getInputStream()), 0, 0, null);
+            os = new ByteArrayOutputStream();
+            ImageIO.write(imageCopy, "png", os);
+            stats = tm.registerDynamicTexture("stats",
+                    new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to dynamically generate Gross Hacks button icons.");
+        }
     }
 
     public static void setTicks(int ticks) {

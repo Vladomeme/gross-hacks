@@ -27,6 +27,14 @@ public class GrossHacksConfigScreen {
                         .setDefaultValue(defaultConfig.enable_extra_buttons)
                         .build());
 
+                category.addEntry(entryBuilder.startBooleanToggle(Text.of("Dynamic button textures"), currentConfig.dynamic_textures)
+                        .setTooltip(Text.of("Attempts to make stats & charms buttons use the same texture as\n" +
+                                "current resource pack's recipe book button. If disabled, resource packs\n" +
+                                "will be able to replace the textures."))
+                        .setSaveConsumer(newConfig -> currentConfig.dynamic_textures = newConfig)
+                        .setDefaultValue(defaultConfig.dynamic_textures)
+                        .build());
+
                 category.addEntry(entryBuilder.startBooleanToggle(Text.of("Disable dismounting"), currentConfig.disable_dismouting)
                         .setTooltip(Text.of("Disables dismounting via sneaking. You can dismount\n" +
                                 "using a special changeable keybind (U by default.)"))

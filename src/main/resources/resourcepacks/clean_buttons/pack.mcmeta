@@ -1,6 +1,6 @@
 {
   "pack": {
-    "pack_format": 8,
-    "description": "Alternate textures for custom buttons"
+    "pack_format": 15,
+    "description": "Requires you to disable dynamic textures."
   }
 }
