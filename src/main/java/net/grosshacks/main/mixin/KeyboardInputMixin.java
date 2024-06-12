@@ -13,10 +13,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardInput.class)
 public abstract class KeyboardInputMixin extends Input {
 
+    @SuppressWarnings("DataFlowIssue")
     @Inject(method = "tick", at = @At(value = "TAIL"))
     private void tick(boolean slowDown, float f, CallbackInfo ci) {
         if (MinecraftClient.getInstance().player.hasVehicle()) {
-            if (GrossHacksConfig.INSTANCE.disable_dismouting) this.sneaking = GrossHacks.unmountKey.wasPressed();
+            if (GrossHacksConfig.INSTANCE.rebindDismounting) this.sneaking = GrossHacks.unmountKey.wasPressed();
             if (this.sneaking || GrossHacks.shouldDismount) GrossHacks.shouldDismount = true;
             return;
         }

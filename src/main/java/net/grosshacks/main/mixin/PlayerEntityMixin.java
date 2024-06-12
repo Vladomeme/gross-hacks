@@ -1,10 +1,13 @@
 package net.grosshacks.main.mixin;
 
 import net.grosshacks.main.GrossHacksConfig;
-import net.grosshacks.main.util.ItemDataAccessor;
-import net.minecraft.client.MinecraftClient;
+import net.grosshacks.main.util.MixinUtil;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,23 +15,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin implements ItemDataAccessor {
+public abstract class PlayerEntityMixin extends LivingEntity implements MixinUtil {
 
-    @Unique
-    final NbtCompound latestTridentData = new NbtCompound();
+    @Unique ItemStack lastTrident;
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
     private void tick(CallbackInfo ci) {
-        if (GrossHacksConfig.INSTANCE.thrown_trident_texture
-                && MinecraftClient.getInstance().player != null
-                && MinecraftClient.getInstance().player.getInventory().getMainHandStack().getItem().toString().equals("trident")) {
-            latestTridentData.put("LatestTridentData", MinecraftClient.getInstance().player.getInventory().getMainHandStack().getNbt());
-        }
+        if (GrossHacksConfig.INSTANCE.tridentCIT && getMainHandStack().getItem().equals(Items.TRIDENT))
+            lastTrident = getMainHandStack();
     }
 
-    @Override
-    public NbtCompound getLatestTridentData(){
-        return latestTridentData;
+    @Unique
+    public ItemStack gh$getLastTrident() {
+        return lastTrident;
     }
 
+    @SuppressWarnings("unused")
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
 }

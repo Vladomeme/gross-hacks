@@ -14,7 +14,7 @@ public abstract class AxeItemMixin {
 
 	@Inject(method = "useOnBlock", at = @At(value = "HEAD"), cancellable = true)
 	private void useOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-		if (GrossHacksConfig.INSTANCE.remove_interactions)
+		if (GrossHacksConfig.INSTANCE.disableInteractions)
 			cir.setReturnValue(ActionResult.PASS);
 	}
 }

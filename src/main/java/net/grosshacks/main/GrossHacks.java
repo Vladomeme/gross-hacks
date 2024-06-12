@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
-import net.grosshacks.main.util.ChatBlocker;
+import net.grosshacks.main.util.MixinUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
@@ -27,6 +27,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,13 +35,10 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.*;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -52,11 +50,11 @@ public class GrossHacks implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("grosshacks");
     private static final MinecraftClient client = MinecraftClient.getInstance();
 
-    public static final ArrayList<String> projectileList = new ArrayList<>();
-    public static final Map<String, Float> tridentScales = new HashMap<>();
+    public static final HashSet<String> projectileList = new HashSet<>();
+    public static final HashMap<String, Float> tridentScales = new HashMap<>();
 
     public static KeyBinding unmountKey;
-    public static boolean shouldDismount = false;
+    public static KeyBinding toggleGlowing;
 
     public static Identifier stats;
     public static Identifier charms;
@@ -64,6 +62,10 @@ public class GrossHacks implements ClientModInitializer {
     private static final List<String> chats = List.of("g", "l", "wc", "tr", "lfg", "gc");
 
     static int nightmareTicks = 1200;
+
+    public static boolean shouldDismount = false;
+    public static boolean potionInfoSent = false;
+    public static boolean inSirius = false;
 
     @Override
     public void onInitializeClient() {
@@ -81,7 +83,7 @@ public class GrossHacks implements ClientModInitializer {
                 findScales(manager);
                 stats = null;
                 charms = null;
-                if (GrossHacksConfig.INSTANCE.dynamic_textures) generateButtons(manager);
+                if (GrossHacksConfig.INSTANCE.generateTextures) generateButtons(manager);
             }
         });
 
@@ -93,19 +95,23 @@ public class GrossHacks implements ClientModInitializer {
                 ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"),
                         container, ResourcePackActivationType.NORMAL));
 
-        unmountKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("Dismount", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "Vlado's Gross Hacks"));
+        unmountKey = KeyBindingHelper.registerKeyBinding(
+                new KeyBinding("Dismount", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_U, "Vlado's Gross Hacks"));
+        toggleGlowing = KeyBindingHelper.registerKeyBinding(
+                new KeyBinding("Toggle player glowing", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "Vlado's Gross Hacks"));
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
-                literal("show").executes(ctx -> show(null))
+                literal("show").executes(ctx -> showCommand(null))
                         .then(argument("chat", StringArgumentType.string())
                                         .suggests(this::getSuggestions).executes(ctx ->
-                                        show(StringArgumentType.getString(ctx, "chat"))))
+                                        showCommand(StringArgumentType.getString(ctx, "chat"))))
         ));
 
         LOGGER.info("Ahhh hell no");
     }
 
-    private static int show(String chat) {
+    @SuppressWarnings("SameReturnValue")
+    private static int showCommand(String chat) {
         ClientPlayerEntity player = client.player;
         if (player == null) return 1;
 
@@ -114,11 +120,7 @@ public class GrossHacks implements ClientModInitializer {
         return 1;
     }
 
-    /*
-    Gets a list of tridents with custom projectiles, runs on resource reload.
-    */
     public static void findProjectiles(ResourceManager manager) {
-
         projectileList.clear();
 
         manager.findResources("optifine", id -> id.getPath().endsWith("projectile.png")).keySet().forEach(id -> {
@@ -130,12 +132,12 @@ public class GrossHacks implements ClientModInitializer {
     }
 
     public static void findScales(ResourceManager manager) {
-
         tridentScales.clear();
 
         manager.findResources("optifine", id -> id.getPath().endsWith("trident_scaling.txt")).keySet().forEach(id -> {
             try {
                 String line;
+                @SuppressWarnings("OptionalGetWithoutIsPresent")
                 BufferedReader reader = new BufferedReader(new InputStreamReader(manager.getResource(id).get().getInputStream()));
 
                 while ((line = reader.readLine()) != null) {
@@ -151,6 +153,7 @@ public class GrossHacks implements ClientModInitializer {
     public static void generateButtons(ResourceManager rm) {
         TextureManager tm = MinecraftClient.getInstance().getTextureManager();
         try {
+            @SuppressWarnings("OptionalGetWithoutIsPresent")
             BufferedImage source = ImageIO.read(rm.getResource(new Identifier("minecraft", "textures/gui/recipe_button.png")).get().getInputStream());
             BufferedImage image = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D ctx = image.createGraphics();
@@ -174,6 +177,7 @@ public class GrossHacks implements ClientModInitializer {
             ctxCopy.drawImage(image, 0, 0, null);
 
             //charms
+            //noinspection OptionalGetWithoutIsPresent
             ctx.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/charms_button_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -182,6 +186,7 @@ public class GrossHacks implements ClientModInitializer {
                     new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
 
             //stats
+            //noinspection OptionalGetWithoutIsPresent
             ctxCopy.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/stats_button_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             os = new ByteArrayOutputStream();
@@ -190,7 +195,7 @@ public class GrossHacks implements ClientModInitializer {
                     new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
 
         } catch (Exception e) {
-            LOGGER.error("Failed to dynamically generate Gross Hacks button icons.");
+            LOGGER.error("Failed to generate Gross Hacks button icons.");
         }
     }
 
@@ -203,18 +208,34 @@ public class GrossHacks implements ClientModInitializer {
     }
 
     public static void tick() {
-        if (GrossHacksConfig.INSTANCE.nightmare_timer &&
+        if (client.player == null) return;
+        if (GrossHacksConfig.INSTANCE.nightmareTimer &&
                 client.player.getWorld().getRegistryKey().getValue().toString().endsWith("gallery")) {
             if (nightmareTicks > 0) nightmareTicks--;
-            if (GrossHacks.getTicks() / 20 <= GrossHacksConfig.INSTANCE.time_remaining) {
+            if (GrossHacks.getTicks() / 20 <= GrossHacksConfig.INSTANCE.timeRemaining) {
                 client.inGameHud.setOverlayMessage(
                         Text.of("§3Nightmares arrive in: " + (GrossHacks.getTicks() / 20)), false);
             }
         }
-        if (((ChatBlocker) client.inGameHud.getChatHud()).isBlocked())
-            ((ChatBlocker) client.inGameHud.getChatHud()).unblockChat();
+        if (toggleGlowing.wasPressed()) {
+            MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.of("§ePlayer glowing is now " + (
+                    GrossHacksConfig.INSTANCE.disableGlowing ? "enabled" : "disabled")), false);
+            GrossHacksConfig.INSTANCE.disableGlowing = !GrossHacksConfig.INSTANCE.disableGlowing;
+            toggleGlowing.reset();
+        }
+        if (((MixinUtil) client.inGameHud.getChatHud()).gh$isBlocked())
+            ((MixinUtil) client.inGameHud.getChatHud()).gh$unblockChat();
+        inSiriusCheck();
+        potionInfoSent = false;
     }
 
+    private static void inSiriusCheck() {
+        if (client.player == null) return;
+        Vec3d pos = client.player.getPos();
+        inSirius = pos.getX() > 270 && pos.getZ() > 950 && pos.getX() < 380 && pos.getZ() < 1060;
+    }
+
+    @SuppressWarnings("unused")
     private CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
         for (String chat : chats) builder.suggest(chat);
         return builder.buildFuture();

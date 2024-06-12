@@ -22,18 +22,18 @@ public class ClientWorldMixin {
 	@Inject(method = "playSoundFromEntity", at = @At(value = "HEAD"), cancellable = true)
 	private void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, RegistryEntry<SoundEvent> sound,
 									 SoundCategory category, float volume, float pitch, long seed, CallbackInfo ci) {
-		if (GrossHacksConfig.INSTANCE.mute_horns) {
-			for (RegistryEntry.Reference<SoundEvent> soundEvent : SoundEvents.GOAT_HORN_SOUNDS) {
-				if (sound.matchesKey(soundEvent.registryKey())) {
-					for (PlayerEntity player : entity.getWorld().getPlayers()) {
-						if (player.getMainHandStack().getItem().toString().equals("goat_horn")) {
-							MinecraftClient.getInstance().inGameHud.setOverlayMessage(
-									Text.of("§e" + player.getEntityName() + " just used a goat horn!"), false);
-						}
-					}
-					ci.cancel();
-				}
+		if (!GrossHacksConfig.INSTANCE.muteHorns) return;
+
+		for (RegistryEntry.Reference<SoundEvent> soundEvent : SoundEvents.GOAT_HORN_SOUNDS) {
+			if (!sound.matchesKey(soundEvent.registryKey())) continue;
+
+			for (PlayerEntity player : entity.getWorld().getPlayers()) {
+				if (!player.getMainHandStack().getItem().toString().equals("goat_horn")) continue;
+
+				MinecraftClient.getInstance().inGameHud.setOverlayMessage(
+						Text.of("§e" + player.getEntityName() + " just used a goat horn!"), false);
 			}
+			ci.cancel();
 		}
 	}
 }

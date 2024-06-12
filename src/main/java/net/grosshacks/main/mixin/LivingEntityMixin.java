@@ -14,7 +14,7 @@ public abstract class LivingEntityMixin {
 
 	@Inject(method = "onDeath", at = @At(value = "TAIL"))
 	private void onDeath(DamageSource damageSource, CallbackInfo ci) {
-		if (GrossHacksConfig.INSTANCE.nightmare_timer)
+		if (GrossHacksConfig.INSTANCE.nightmareTimer)
 			GrossHacks.setTicks(1200);
 	}
 }

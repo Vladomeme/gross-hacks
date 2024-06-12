@@ -28,11 +28,12 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 	@Inject(method = "init", at = @At(value = "INVOKE",
 			target="Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;"))
 	private void init(CallbackInfo ci) {
-		if (GrossHacksConfig.INSTANCE.enable_extra_buttons) {
+		if (GrossHacksConfig.INSTANCE.extraButtons) {
 			if (GrossHacks.stats == null) {
 				GrossHacks.stats = new Identifier("grosshacks", "textures/stats_button.png");
 				GrossHacks.charms = new Identifier("grosshacks", "textures/charms_button.png");
 			}
+			if (MinecraftClient.getInstance().getNetworkHandler() == null) return;
 			this.addDrawableChild(statsButton = new TexturedButtonWidget(this.x + 126, this.height / 2 - 22, 20, 18, 0, 0, 19,
 					GrossHacks.stats, button -> MinecraftClient.getInstance().getNetworkHandler().sendCommand("ps")));
 			this.addDrawableChild(charmsButton = new TexturedButtonWidget(this.x + 148, this.height / 2 - 22, 20, 18, 0, 0, 19,
@@ -42,12 +43,13 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 
 	@Inject(method = "method_19891(Lnet/minecraft/client/gui/widget/ButtonWidget;)V", at = @At("TAIL"))
 	private void moveButtonWithRecipeBook(CallbackInfo ci) {
-		if (GrossHacksConfig.INSTANCE.enable_extra_buttons) {
+		if (GrossHacksConfig.INSTANCE.extraButtons) {
 			this.statsButton.setPosition(this.x + 126, this.height / 2 - 22);
 			this.charmsButton.setPosition(this.x + 148, this.height / 2 - 22);
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public InventoryScreenMixin(PlayerScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
 		super(screenHandler, playerInventory, text);
 	}

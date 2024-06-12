@@ -8,12 +8,13 @@ import net.minecraft.client.gui.screen.NoticeScreen;
 import net.minecraft.text.Text;
 
 public class GrossHacksModMenu implements ModMenuApi {
+
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        if (FabricLoader.getInstance().isModLoaded("cloth-config2")) {
-            return GrossHacksConfigScreen::create;
+        if (FabricLoader.getInstance().isModLoaded("yet_another_config_lib_v3")) {
+            return GrossHacksConfig.INSTANCE::create;
         }
         return parent -> new NoticeScreen(() -> MinecraftClient.getInstance().setScreen(parent),
-                Text.of("Vlado's Gross Hacks"), Text.of("Mod requires Cloth Config to be able to show the config."));
+                Text.of("Vlado's Gross Hacks"), Text.of("Mod requires YetAnotherConfigLib to be able to show the config."));
     }
 }

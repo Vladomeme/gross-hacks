@@ -1,7 +1,7 @@
 package net.grosshacks.main.mixin;
 
 import net.grosshacks.main.GrossHacksConfig;
-import net.grosshacks.main.util.ChatBlocker;
+import net.grosshacks.main.util.MixinUtil;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.ChatHudLine;
 import net.minecraft.client.gui.hud.MessageIndicator;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ChatHud.class)
-public abstract class ChatHudMixin implements ChatBlocker {
+public abstract class ChatHudMixin implements MixinUtil {
 
 	@Shadow public abstract void addMessage(Text message);
 
@@ -34,7 +34,8 @@ public abstract class ChatHudMixin implements ChatBlocker {
 	@Unique
 	boolean messageFound = false;
 	@Unique
-	ArrayList<Text> messageHistory = new ArrayList<>();
+    final
+    ArrayList<Text> messageHistory = new ArrayList<>();
 
 	//Block chat for a tick once an empty message is received (a sign that chat got refreshed)
 	//Find first non-empty message
@@ -115,13 +116,13 @@ public abstract class ChatHudMixin implements ChatBlocker {
 	}
 
 	@Unique
-	public boolean isBlocked() {
+	public boolean gh$isBlocked() {
 		return chatBlocked;
 	}
 
 	//Runs at the end of the tick if chat is blocked
 	@Unique
-	public void unblockChat() {
+	public void gh$unblockChat() {
 		chatBlocked = false;
 		messageFound = false;
 		for (Text message : messageHistory) {

@@ -10,16 +10,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-
 @Mixin(FishingBobberEntityRenderer.class)
 public class FishingBobberEntityRendererMixin {
 
     @Inject(method = "render(Lnet/minecraft/entity/projectile/FishingBobberEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V",
             at = @At("HEAD"), cancellable = true)
-    private void render(FishingBobberEntity fishingBobberEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        if (fishingBobberEntity.getHookedEntity() != null) {
+    private void render(FishingBobberEntity entity, float f, float g, MatrixStack matrices,
+                        VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+        if (entity.getHookedEntity() != null && MinecraftClient.getInstance().player != null) {
             String player = MinecraftClient.getInstance().player.getEntityName();
-            if (fishingBobberEntity.getHookedEntity().getEntityName().equals(player)) ci.cancel();
+            if (entity.getHookedEntity().getEntityName().equals(player)) ci.cancel();
         }
     }
 }
