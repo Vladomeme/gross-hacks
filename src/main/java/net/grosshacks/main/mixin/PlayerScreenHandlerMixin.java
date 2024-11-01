@@ -59,7 +59,6 @@ public abstract class PlayerScreenHandlerMixin extends AbstractRecipeScreenHandl
         }
     }
 
-    @SuppressWarnings("unused")
     public PlayerScreenHandlerMixin(ScreenHandlerType<?> screenHandlerType, int i) {
         super(screenHandlerType, i);
     }

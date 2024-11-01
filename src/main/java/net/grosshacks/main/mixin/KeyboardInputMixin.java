@@ -22,6 +22,6 @@ public abstract class KeyboardInputMixin extends Input {
             return;
         }
         GrossHacks.shouldDismount = false;
-        GrossHacks.unmountKey.reset();
+        ((KeyBindingAccessor) GrossHacks.unmountKey).reset();
     }
 }

@@ -22,21 +22,21 @@ public abstract class ClientPlayNetworkHandlerMixin {
             target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;)V"))
     private void onEntityPassengersSet$warn(Logger instance, String s) {
         if (GrossHacksConfig.INSTANCE.cleanLogs) return;
-        instance.warn("Received passengers for unknown entity");
+        GrossHacks.LOGGER.warn("Received passengers for unknown entity");
     }
 
     @Redirect(method = "onTeam", at = @At(value = "INVOKE",
             target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;[Ljava/lang/Object;)V"))
     private void onTeam$warn(Logger instance, String s, Object[] objects) {
         if (GrossHacksConfig.INSTANCE.cleanLogs) return;
-        instance.warn("Received packet for unknown team {}: team action: {}, player action: {}", objects);
+        GrossHacks.LOGGER.warn("Received packet for unknown team {}: team action: {}, player action: {}", objects);
     }
 
     @Redirect(method = "onPlayerList", at = @At(value = "INVOKE",
-            target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;)V"))
-    private void onPlayerList$warn(Logger instance, String s, Object o) {
+            target = "Lorg/slf4j/Logger;warn(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V"))
+    private void onPlayerList$warn(Logger instance, String s, Object o1, Object o2) {
         if (GrossHacksConfig.INSTANCE.cleanLogs) return;
-        instance.warn("Ignoring player info update for unknown player {}", o);
+        GrossHacks.LOGGER.warn("Ignoring player info update for unknown player {} ({})", o1, o2);
     }
 
     @Redirect(method = "onEntityPassengersSet", at = @At(value = "INVOKE",

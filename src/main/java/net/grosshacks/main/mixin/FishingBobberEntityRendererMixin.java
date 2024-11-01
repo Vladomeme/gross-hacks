@@ -18,8 +18,7 @@ public class FishingBobberEntityRendererMixin {
     private void render(FishingBobberEntity entity, float f, float g, MatrixStack matrices,
                         VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         if (entity.getHookedEntity() != null && MinecraftClient.getInstance().player != null) {
-            String player = MinecraftClient.getInstance().player.getEntityName();
-            if (entity.getHookedEntity().getEntityName().equals(player)) ci.cancel();
+            if (entity.getHookedEntity().equals(MinecraftClient.getInstance().player)) ci.cancel();
         }
     }
 }

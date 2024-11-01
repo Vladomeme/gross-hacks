@@ -71,7 +71,7 @@ public class GrossHacksConfig {
     public boolean disableInteractions = false;
     public boolean fixMountDesync = true;
     public boolean rebindDismounting = false;
-    public boolean nightmareTimer = true;
+    public boolean nightmareTimer = false;
     public int timeRemaining = 60;
 
     //QOL
@@ -84,7 +84,6 @@ public class GrossHacksConfig {
     public boolean cleanLogs = false;
 
     //Other
-    public boolean undelete = false;
     public boolean generateTextures = true;
 
     public Screen create(Screen parent) {
@@ -205,7 +204,7 @@ public class GrossHacksConfig {
                                 .name(Text.literal("Enable nightmare timer"))
                                 .description(OptionDescription.of(Text.literal(
                                         "Shows (badly approximated) time left before nightmares arrive in Gallery.")))
-                                .binding(true, () -> nightmareTimer, newVal -> nightmareTimer = newVal)
+                                .binding(false, () -> nightmareTimer, newVal -> nightmareTimer = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Integer>createBuilder()
@@ -281,14 +280,6 @@ public class GrossHacksConfig {
                                                 "current resource pack's recipe book button. If disabled, resource packs " +
                                                 "will be able to replace the textures.")))
                                 .binding(false, () -> generateTextures, newVal -> generateTextures = newVal)
-                                .controller(TickBoxControllerBuilder::create).build())
-
-                        .option(Option.<Boolean>createBuilder()
-                                .name(Text.literal("Keep deleted messages"))
-                                .description(OptionDescription.of(Text.literal(
-                                        "Attempts to mark deleted messages in chat instead of removing them. " +
-                                                "Might cause issues.")))
-                                .binding(false, () -> undelete, newVal -> undelete = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
                         .build())
                 .build()

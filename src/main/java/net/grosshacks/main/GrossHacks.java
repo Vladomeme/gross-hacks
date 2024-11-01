@@ -15,8 +15,9 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
-import net.grosshacks.main.util.MixinUtil;
+import net.grosshacks.main.mixin.KeyBindingAccessor;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.texture.NativeImage;
@@ -56,8 +57,8 @@ public class GrossHacks implements ClientModInitializer {
     public static KeyBinding unmountKey;
     public static KeyBinding toggleGlowing;
 
-    public static Identifier stats;
-    public static Identifier charms;
+    public static ButtonTextures stats;
+    public static ButtonTextures charms;
 
     private static final List<String> chats = List.of("g", "l", "wc", "tr", "lfg", "gc");
 
@@ -81,9 +82,13 @@ public class GrossHacks implements ClientModInitializer {
             public void reload(ResourceManager manager) {
                 findProjectiles(manager);
                 findScales(manager);
-                stats = null;
-                charms = null;
                 if (GrossHacksConfig.INSTANCE.generateTextures) generateButtons(manager);
+                else {
+                    stats = new ButtonTextures(new Identifier("grosshacks", "stats_unfocused"),
+                            new Identifier("grosshacks", "stats_focused"));
+                    charms = new ButtonTextures(new Identifier("grosshacks", "charms_unfocused"),
+                            new Identifier("grosshacks", "charms_focused"));
+                }
             }
         });
 
@@ -144,58 +149,93 @@ public class GrossHacks implements ClientModInitializer {
                     String[] entry = line.split(":", 2);
                     tridentScales.put(entry[0], Float.valueOf(entry[1]));
                 }
-            } catch (IOException e) {
-                throw new RuntimeException("An error occured while trying to read "+id.getPath());
+            }
+            catch (IOException e) {
+                throw new RuntimeException("An error occured while trying to read " + id.getPath());
             }
         });
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static void generateButtons(ResourceManager rm) {
         TextureManager tm = MinecraftClient.getInstance().getTextureManager();
         try {
-            @SuppressWarnings("OptionalGetWithoutIsPresent")
-            BufferedImage source = ImageIO.read(rm.getResource(new Identifier("minecraft", "textures/gui/recipe_button.png")).get().getInputStream());
-            BufferedImage image = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D ctx = image.createGraphics();
-            ctx.drawImage(source, 0, 0, null);
+            //UNFOCUSED----------------------------------------------------
+            BufferedImage sourceUnfocused = ImageIO.read(rm.getResource(
+                    new Identifier("minecraft", "textures/gui/sprites/recipe_book/button.png")).get().getInputStream());
+            BufferedImage imageUnfocused = new BufferedImage(20, 18, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D ctxUnfocused = imageUnfocused.createGraphics();
+            ctxUnfocused.drawImage(sourceUnfocused, 0, 0, null);
 
-            //inactive empty
-            Color color = new Color(image.getRGB(2, 2), true);
-            ctx.setBackground(new Color(0, 0, 0, 0));
-            ctx.clearRect(2, 2, 16, 14);
-            ctx.setColor(color);
-            ctx.fillRect(2, 2, 16, 14);
-            //hovered empty
-            color = new Color(image.getRGB(2, 21), true);
-            ctx.clearRect(2, 21, 16, 14);
-            ctx.setColor(color);
-            ctx.fillRect(2, 21, 16, 14);
+            Color color = new Color(imageUnfocused.getRGB(2, 2), true);
+            ctxUnfocused.setBackground(new Color(0, 0, 0, 0));
+            ctxUnfocused.clearRect(2, 2, 16, 14);
+            ctxUnfocused.setColor(color);
+            ctxUnfocused.fillRect(2, 2, 16, 14);
 
-            //make a copy
-            BufferedImage imageCopy = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage imageCopy = new BufferedImage(20, 18, BufferedImage.TYPE_INT_ARGB);
             Graphics2D ctxCopy = imageCopy.createGraphics();
-            ctxCopy.drawImage(image, 0, 0, null);
+            ctxCopy.drawImage(imageUnfocused, 0, 0, null);
 
             //charms
-            //noinspection OptionalGetWithoutIsPresent
-            ctx.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/charms_button_clean.png"))
+            ctxUnfocused.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/charms_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", os);
-            charms = tm.registerDynamicTexture("charms",
+            ImageIO.write(imageUnfocused, "png", os);
+            Identifier charmsUnfocused = tm.registerDynamicTexture("textures/gui/sprites/charms",
                     new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
 
             //stats
-            //noinspection OptionalGetWithoutIsPresent
-            ctxCopy.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/stats_button_clean.png"))
+            ctxCopy.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/stats_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             os = new ByteArrayOutputStream();
             ImageIO.write(imageCopy, "png", os);
-            stats = tm.registerDynamicTexture("stats",
+            Identifier statsUnfocused = tm.registerDynamicTexture("textures/gui/sprites/stats",
                     new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
 
-        } catch (Exception e) {
-            LOGGER.error("Failed to generate Gross Hacks button icons.");
+            //FOCUSED----------------------------------------------------
+            BufferedImage sourceFocused = ImageIO.read(rm.getResource(
+                    new Identifier("minecraft", "textures/gui/sprites/recipe_book/button_highlighted.png")).get().getInputStream());
+            BufferedImage imageFocused = new BufferedImage(20, 18, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D ctxFocused = imageFocused.createGraphics();
+            ctxFocused.drawImage(sourceFocused, 0, 0, null);
+
+            color = new Color(imageFocused.getRGB(2, 2), true);
+            ctxFocused.setBackground(new Color(0, 0, 0, 0));
+            ctxFocused.clearRect(2, 2, 16, 14);
+            ctxFocused.setColor(color);
+            ctxFocused.fillRect(2, 2, 16, 14);
+
+            imageCopy = new BufferedImage(20, 18, BufferedImage.TYPE_INT_ARGB);
+            ctxCopy = imageCopy.createGraphics();
+            ctxCopy.drawImage(imageFocused, 0, 0, null);
+
+            //charms
+            ctxFocused.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/charms_clean.png"))
+                    .get().getInputStream()), 0, 0, null);
+            os = new ByteArrayOutputStream();
+            ImageIO.write(imageFocused, "png", os);
+            Identifier charmsFocused = tm.registerDynamicTexture("textures/gui/sprites/charms",
+                    new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
+
+            //stats
+            ctxCopy.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/stats_clean.png"))
+                    .get().getInputStream()), 0, 0, null);
+            os = new ByteArrayOutputStream();
+            ImageIO.write(imageCopy, "png", os);
+            Identifier statsFocused = tm.registerDynamicTexture("textures/gui/sprites/stats",
+                    new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
+
+            //FINISH------------------------------------------------------
+            charms = new ButtonTextures(charmsUnfocused, charmsFocused);
+            stats = new ButtonTextures(statsUnfocused, statsFocused);
+        }
+        catch (Exception e) {
+            LOGGER.error("Failed to dynamically generate Gross Hacks button icons.");
+            charms = new ButtonTextures(new Identifier("grosshacks", "charms_unfocused"),
+                    new Identifier("grosshacks", "charms_focused"));
+            stats = new ButtonTextures(new Identifier("grosshacks", "stats_unfocused"),
+                    new Identifier("grosshacks", "stats_focused"));
         }
     }
 
@@ -221,10 +261,8 @@ public class GrossHacks implements ClientModInitializer {
             MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.of("§ePlayer glowing is now " + (
                     GrossHacksConfig.INSTANCE.disableGlowing ? "enabled" : "disabled")), false);
             GrossHacksConfig.INSTANCE.disableGlowing = !GrossHacksConfig.INSTANCE.disableGlowing;
-            toggleGlowing.reset();
+            ((KeyBindingAccessor) toggleGlowing).reset();
         }
-        if (((MixinUtil) client.inGameHud.getChatHud()).gh$isBlocked())
-            ((MixinUtil) client.inGameHud.getChatHud()).gh$unblockChat();
         inSiriusCheck();
         potionInfoSent = false;
     }
@@ -235,7 +273,6 @@ public class GrossHacks implements ClientModInitializer {
         inSirius = pos.getX() > 270 && pos.getZ() > 950 && pos.getX() < 380 && pos.getZ() < 1060;
     }
 
-    @SuppressWarnings("unused")
     private CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
         for (String chat : chats) builder.suggest(chat);
         return builder.buildFuture();

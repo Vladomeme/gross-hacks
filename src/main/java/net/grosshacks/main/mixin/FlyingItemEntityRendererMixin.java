@@ -9,7 +9,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -27,26 +26,27 @@ public abstract class FlyingItemEntityRendererMixin<T extends Entity> {
 		if (GrossHacksConfig.INSTANCE.potionInfo == GrossHacksConfig.PotionInfo.Disabled ||
 				GrossHacks.potionInfoSent || !(entity instanceof PotionEntity) || entity.age != 1) return;
 
-		MutableText name = ((PotionEntity) entity).getStack().getName().copy();
-		if (!nameCheck(name.getString())) return;
+		String name = ((PotionEntity) entity).getStack().getName().getString();
+		if (name.equals("Alchemist's Potion") || name.equals("Splash Uncraftable Potion")) return;
+		if (GrossHacksConfig.INSTANCE.potionInfo == GrossHacksConfig.PotionInfo.Clucking
+			&& !(name.equals("Jar of Clucks"))) return;
 
-		String thrower;
-		if (((PotionEntity) entity).getOwner() != null && ((PotionEntity) entity).getOwner() instanceof PlayerEntity)
-			thrower = ((PotionEntity) entity).getOwner().getName().getString();
-		else return;
-
-		MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
-				name.append(Text.literal(" used by " + thrower + "!")
-					.setStyle(Style.EMPTY.withColor(Formatting.GOLD)
-							.withBold(false).withItalic(false).withUnderline(false))));
+		MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal(
+				((PotionEntity) entity).getStack().getName().getString() +
+						" used " + getThrower((PotionEntity) entity) + "!")
+					.setStyle(Style.EMPTY.withColor(Formatting.GOLD)));
 		GrossHacks.potionInfoSent = true;
 	}
 
 	@Unique
-	private boolean nameCheck(String name) {
-		if (GrossHacksConfig.INSTANCE.potionInfo == GrossHacksConfig.PotionInfo.Clucking)
-			return (name.equals("Jar of Clucks"));
+	private String getThrower(PotionEntity entity) {
+		if (entity.getOwner() != null && entity.getOwner() instanceof PlayerEntity)
+			return "by " + entity.getOwner().getName().getString();
 
-		return !(name.equals("Alchemist's Potion") || name.contains("Splash") || name.contains("Lingering"));
-    }
+		PlayerEntity player;
+		if ((player = entity.getWorld().getClosestPlayer(entity, 10)) != null)
+			return "near " + player.getName().getString();
+
+		return "by unknown player";
+	}
 }

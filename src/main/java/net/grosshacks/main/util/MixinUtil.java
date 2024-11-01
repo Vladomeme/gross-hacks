@@ -7,6 +7,4 @@ public interface MixinUtil {
     ItemStack gh$getTrident();
     float gh$getTridentScale();
     ItemStack gh$getLastTrident();
-    void gh$unblockChat();
-    boolean gh$isBlocked();
 }

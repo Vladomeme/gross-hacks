@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {
 
-	@Inject(method = "playSoundFromEntity", at = @At(value = "HEAD"), cancellable = true)
+	@Inject(method = "playSoundFromEntity*", at = @At(value = "HEAD"), cancellable = true)
 	private void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, RegistryEntry<SoundEvent> sound,
 									 SoundCategory category, float volume, float pitch, long seed, CallbackInfo ci) {
 		if (!GrossHacksConfig.INSTANCE.muteHorns) return;
@@ -31,7 +31,7 @@ public class ClientWorldMixin {
 				if (!player.getMainHandStack().getItem().toString().equals("goat_horn")) continue;
 
 				MinecraftClient.getInstance().inGameHud.setOverlayMessage(
-						Text.of("§e" + player.getEntityName() + " just used a goat horn!"), false);
+						Text.of("§e" + player.getName() + " just used a goat horn!"), false);
 			}
 			ci.cancel();
 		}
