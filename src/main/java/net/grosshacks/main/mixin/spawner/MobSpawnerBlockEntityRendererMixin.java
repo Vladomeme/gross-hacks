@@ -24,10 +24,8 @@ public class MobSpawnerBlockEntityRendererMixin {
 						VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
 		if (GrossHacksConfig.INSTANCE.spawnerCulling &&
 				!isPlayerInRange(Objects.requireNonNull(blockEntity.getWorld()), blockEntity.getPos(),
-						((MobSpawnerLogicAccessor) blockEntity.getLogic()).getRequiredPlayerRange())) {
-			matrices.pop();
+						((MobSpawnerLogicAccessor) blockEntity.getLogic()).getRequiredPlayerRange()))
 			ci.cancel();
-		}
 	}
 
 	@Unique
