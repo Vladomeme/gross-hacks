@@ -65,7 +65,6 @@ public class GrossHacks implements ClientModInitializer {
     static int nightmareTicks = 1200;
 
     public static boolean shouldDismount = false;
-    public static boolean potionInfoSent = false;
     public static boolean inSirius = false;
 
     @Override
@@ -264,7 +263,6 @@ public class GrossHacks implements ClientModInitializer {
             ((KeyBindingAccessor) toggleGlowing).reset();
         }
         inSiriusCheck();
-        potionInfoSent = false;
     }
 
     private static void inSiriusCheck() {

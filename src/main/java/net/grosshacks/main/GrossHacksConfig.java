@@ -296,4 +296,8 @@ public class GrossHacksConfig {
             return Text.literal(name().toLowerCase());
         }
     }
+
+    public boolean potionInfoEnabled() {
+        return INSTANCE.potionInfo != PotionInfo.Disabled;
+    }
 }
