@@ -23,6 +23,7 @@
     "buttons.RecipeBookWidgetMixin",
     "buttons.TexturedButtonWidgetMixin",
     "item_interactions.AxeItemMixin",
+    "item_interactions.BlockItemMixin",
     "item_interactions.HoeItemMixin",
     "item_interactions.ShovelItemMixin",
     "spawner.MobSpawnerBlockEntityRendererMixin",

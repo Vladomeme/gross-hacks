@@ -70,6 +70,7 @@ public class GrossHacksConfig {
     public boolean extraButtons = true;
     public boolean dailiesButton = true;
     public boolean disableInteractions = false;
+    public boolean loomAntighost = true;
     public boolean fixMountDesync = true;
     public boolean rebindDismounting = false;
     public boolean nightmareTimer = false;
@@ -192,6 +193,13 @@ public class GrossHacksConfig {
                                 .description(OptionDescription.of(Text.literal(
                                         "Disables right click interactions with blocks when using an axe/shovel/hoe.")))
                                 .binding(false, () -> disableInteractions, newVal -> disableInteractions = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Loom anti-ghost"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Prevents Worldshaper's Loom from going into ghost mode when placed on the ground.")))
+                                .binding(true, () -> loomAntighost, newVal -> loomAntighost = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
