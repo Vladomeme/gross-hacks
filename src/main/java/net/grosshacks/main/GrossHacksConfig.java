@@ -68,6 +68,7 @@ public class GrossHacksConfig {
 
     //Gameplay
     public boolean extraButtons = true;
+    public boolean dailiesButton = true;
     public boolean disableInteractions = false;
     public boolean fixMountDesync = true;
     public boolean rebindDismounting = false;
@@ -177,6 +178,13 @@ public class GrossHacksConfig {
                                 .description(OptionDescription.of(Text.literal(
                                         "Adds buttons to open player stats and charms to your inventory.")))
                                 .binding(true, () -> extraButtons, newVal -> extraButtons = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Add dailies button"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Adds button to your inventory to open dailies screen.")))
+                                .binding(true, () -> dailiesButton, newVal -> dailiesButton = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()

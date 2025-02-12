@@ -33,6 +33,7 @@ public abstract class ThrownEntityMixin {
 			Text name = potion.getStack().getName();
 			if (GrossHacksConfig.INSTANCE.potionInfo == GrossHacksConfig.PotionInfo.Clucking
 					&& !(name.getString().equals("Jar of Clucks"))) return;
+			if (name.getString().equals("Alchemist's Potion")) return;
 
 			MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
 					potion.getStack().getName().copy().append(Text.literal(" used by " + owner.get() + "!")
