@@ -5,8 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.entity.projectile.thrown.ThrownEntity;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,7 +20,7 @@ public abstract class ThrownEntityMixin {
 
 	@Unique
     final Style STYLE = Style.EMPTY.withColor(Formatting.GOLD).withBold(false).withItalic(false).withUnderline(false);
-	//todo [Shame] button.
+
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	private void tick(CallbackInfo ci) {
 		if (!GrossHacksConfig.INSTANCE.potionInfoEnabled()) return;
@@ -31,13 +30,19 @@ public abstract class ThrownEntityMixin {
 			if (owner.isEmpty()) return;
 
 			Text name = potion.getStack().getName();
-			if (GrossHacksConfig.INSTANCE.potionInfo == GrossHacksConfig.PotionInfo.Clucking
-					&& !(name.getString().equals("Jar of Clucks"))) return;
 			if (name.getString().equals("Alchemist's Potion")) return;
 
-			MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(
-					potion.getStack().getName().copy().append(Text.literal(" used by " + owner.get() + "!")
-					.setStyle(STYLE)));
+			MutableText message = potion.getStack().getName().copy().append(Text.literal(" used by " + owner.get() + "! ").setStyle(STYLE));
+			if (name.getString().equals("Jar of Clucks")) {
+				message.append(Text.literal("[Copy]").setStyle(Style.EMPTY.withColor(Formatting.AQUA)
+						.withUnderline(true).withBold(false)
+						.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message.getString()))
+						.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))));
+				MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(message);
+				return;
+			}
+			if (GrossHacksConfig.INSTANCE.potionInfo == GrossHacksConfig.PotionInfo.All)
+				MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(message);
 		}
 	}
 
