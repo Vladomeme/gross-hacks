@@ -2,8 +2,13 @@ package net.grosshacks.main.mixin.buttons;
 
 import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
+import net.grosshacks.main.util.Colours;
+import net.grosshacks.main.util.MixinUtil;
+import net.grosshacks.main.wallet.NewWithdrawalScreen;
+import net.grosshacks.main.wallet.WalletListWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
@@ -13,7 +18,6 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -23,21 +27,35 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import static net.grosshacks.main.wallet.WalletManager.*;
+
 @Mixin(InventoryScreen.class)
-public abstract class InventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> implements RecipeBookProvider {
+public abstract class InventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> implements RecipeBookProvider, MixinUtil {
+
+	@Unique private final MinecraftClient client = MinecraftClient.getInstance();
 
 	@Unique ClientPlayNetworkHandler nh;
 	@Unique TexturedButtonWidget statsButton;
 	@Unique TexturedButtonWidget charmsButton;
 	@Unique ButtonWidget dailiesButton;
-	@Unique ItemStack DEFAULT_ITEM = Items.CLOCK.getDefaultStack();
-	@Unique ItemStack RP_ITEM = getRPItem();
-	@Unique Identifier ID = Identifier.of("minecraft", "optifine/cit/celsian_isles/skin/patron/depefs_annilys/depefs_annilys.png");
+	@Unique ButtonWidget walletWidget;
+	@Unique public WalletListWidget walletListWidget;
+	@SuppressWarnings("unused")
+    @Unique TexturedButtonWidget addButton;
 
-	@Inject(method = "init", at = @At(value = "INVOKE",
+	@Unique final ItemStack DAILIES_DEFAULT_ITEM = Items.CLOCK.getDefaultStack();
+	@Unique final ItemStack DAILIES_RP_ITEM = getRPItem(Items.MUSIC_DISC_11.getDefaultStack(), "Annilys", "fe1b8b10-fd00-4ba9-80a2-4a8a798ac1b2", 1);
+	@Unique final Identifier DAILIES_ID = Identifier.of("minecraft", "optifine/cit/celsian_isles/skin/patron/depefs_annilys/depefs_annilys.png");
+
+	@Unique final ItemStack WALLET_DEFAULT_ITEM = Items.BUNDLE.getDefaultStack();
+	@Unique final ItemStack WALLET_RP_ITEM = getRPItem(Items.FLOWER_POT.getDefaultStack(), "Bag of Hoarding", "", 1);
+	@Unique final Identifier WALLET_ID = Identifier.of("minecraft", "optifine/cit/architects_ring/epic/bag_of_hoarding/bag_of_hoarding.png");
+
+	@SuppressWarnings("DataFlowIssue")
+    @Inject(method = "init", at = @At(value = "INVOKE",
 			target="Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;"))
 	private void init(CallbackInfo ci) {
-		nh = MinecraftClient.getInstance().getNetworkHandler();
+		nh = client.getNetworkHandler();
 		if (GrossHacksConfig.INSTANCE.extraButtons) {
 			addDrawableChild(statsButton = new TexturedButtonWidget(x + 126, height / 2 - 22, 20, 18,
 					GrossHacks.stats, button -> nh.sendCommand("ps")));
@@ -47,6 +65,18 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 		if (GrossHacksConfig.INSTANCE.dailiesButton) {
 			addDrawableChild(dailiesButton = ButtonWidget.builder(Text.empty(), button -> nh.sendCommand("player status dailies"))
 					.dimensions(x + 156, height / 2 - 103, 20, 20).build());
+		}
+		if (GrossHacksConfig.INSTANCE.withdrawMenu) {
+			addDrawableChild(walletWidget = ButtonWidget.builder(Text.empty(), button -> {})
+					.dimensions(5, height / 2 - 83, 20, 20).build());
+			addDrawableChild(walletListWidget = new WalletListWidget(5, 90, 250, height / 2 - 83));
+			walletListWidget.visible = false;
+
+			ButtonTextures texture = new ButtonTextures(new Identifier("grosshacks", "new"),
+					new Identifier("grosshacks", "new"));
+			addDrawableChild(addButton = new TexturedButtonWidget(79, height / 2 - 99, 12, 12, texture,
+					button -> client.setScreen(new NewWithdrawalScreen(client.player.getInventory()))));
+			addButton.visible = false;
 		}
 	}
 
@@ -64,41 +94,53 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 	@Inject(method = "render", at = @At("TAIL"))
 	private void render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
 		if (GrossHacksConfig.INSTANCE.dailiesButton) {
-			if (MinecraftClient.getInstance().getResourceManager().getResource(ID).isPresent())
-				context.drawItem(RP_ITEM, dailiesButton.getX() + 2, dailiesButton.getY() + 2);
-			else context.drawItem(DEFAULT_ITEM, dailiesButton.getX() + 2, dailiesButton.getY() + 2);
+			if (client.getResourceManager().getResource(DAILIES_ID).isPresent())
+				context.drawItem(DAILIES_RP_ITEM, dailiesButton.getX() + 2, dailiesButton.getY() + 2);
+			else context.drawItem(DAILIES_DEFAULT_ITEM, dailiesButton.getX() + 2, dailiesButton.getY() + 2);
 
 			if (dailiesButton.isMouseOver(mouseX, mouseY))
-				context.drawTooltip(MinecraftClient.getInstance().textRenderer, Text.of("Dailies"), mouseX, mouseY);
+				context.drawTooltip(client.textRenderer, Text.of("Dailies"), mouseX, mouseY);
+		}
+		if (GrossHacksConfig.INSTANCE.withdrawMenu) {
+			if (walletWidget.visible) {
+				if (client.getResourceManager().getResource(WALLET_ID).isPresent())
+					context.drawItem(WALLET_RP_ITEM, walletWidget.getX() + 2, walletWidget.getY() + 2);
+				else {
+					context.getMatrices().push();
+					context.getMatrices().scale(0.8f, 0.8f, 1);
+					context.drawItem(WALLET_DEFAULT_ITEM, (int) ((walletWidget.getX() + 2) * 1.25f), (int) ((walletWidget.getY() + 2) * 1.25f));
+					context.getMatrices().pop();
+				}
+			}
+			if (walletWidget.isMouseOver(mouseX, mouseY)) {
+				if (isWalletAvailable()) {
+					walletWidget.visible = false;
+					walletListWidget.visible = true;
+					addButton.visible = true;
+				}
+				else context.drawTooltip(client.textRenderer, Text.of("No wallet in inventory!"), mouseX, mouseY);
+			}
+			if (walletListWidget.visible) {
+				context.drawText(client.textRenderer, "Withdrawals",
+						walletListWidget.getX() + 3, walletListWidget.getY() - 14, Colours.text(), true);
+				if (!walletListWidget.isMouseOver(mouseX, mouseY)) {
+					walletWidget.visible = true;
+					walletListWidget.visible = false;
+					addButton.visible = false;
+				}
+				else if (addButton.isMouseOver(mouseX, mouseY)) {
+					context.drawTooltip(client.textRenderer, Text.of("Add"), mouseX, mouseY);
+				}
+			}
 		}
 	}
 
-	@Unique
-	private ItemStack getRPItem() {
-		ItemStack stack = Items.MUSIC_DISC_11.getDefaultStack();
-
-		NbtCompound nbt = new NbtCompound();
-		NbtCompound plain = new NbtCompound();
-		nbt.put("plain", plain);
-		NbtCompound display = new NbtCompound();
-		plain.put("display", display);
-		display.putString("Name", "Annilys");
-
-		NbtCompound monumenta = new NbtCompound();
-		nbt.put("Monumenta", monumenta);
-		NbtCompound playerModified = new NbtCompound();
-		monumenta.put("PlayerModified", playerModified);
-		NbtCompound infusions = new NbtCompound();
-		playerModified.put("Infusions", infusions);
-		NbtCompound hope = new NbtCompound();
-		infusions.put("Hope", hope);
-		hope.putString("Infuser", "fe1b8b10-fd00-4ba9-80a2-4a8a798ac1b2");
-
-		GrossHacks.LOGGER.info(nbt.asString());
-		stack.setNbt(nbt);
-		return stack;
+	@Override
+	public void gh$updateEntries() {
+		walletListWidget.setEntries();
 	}
 
+	@SuppressWarnings("unused")
 	public InventoryScreenMixin(PlayerScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
 		super(screenHandler, playerInventory, text);
 	}

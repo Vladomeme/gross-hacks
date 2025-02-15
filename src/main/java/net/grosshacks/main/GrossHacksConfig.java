@@ -69,6 +69,7 @@ public class GrossHacksConfig {
     //Gameplay
     public boolean extraButtons = true;
     public boolean dailiesButton = true;
+    public boolean withdrawMenu = true;
     public boolean disableInteractions = false;
     public boolean loomAntighost = true;
     public boolean fixMountDesync = true;
@@ -186,6 +187,13 @@ public class GrossHacksConfig {
                                 .description(OptionDescription.of(Text.literal(
                                         "Adds button to your inventory to open dailies screen.")))
                                 .binding(true, () -> dailiesButton, newVal -> dailiesButton = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Wallet withdraw menu"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Adds a menu with wallet shortcuts to your inventory screen.")))
+                                .binding(true, () -> withdrawMenu, newVal -> withdrawMenu = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()

@@ -1,14 +1,13 @@
 package net.grosshacks.main;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -16,6 +15,8 @@ import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.fabricmc.loader.api.FabricLoader;
 import net.grosshacks.main.mixin.KeyBindingAccessor;
+import net.grosshacks.main.wallet.WalletManager;
+import net.grosshacks.main.wallet.WithdrawalIO;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -64,6 +65,7 @@ public class GrossHacks implements ClientModInitializer {
 
     static int nightmareTicks = 1200;
 
+    public static boolean handbookAvailable = false;
     public static boolean shouldDismount = false;
     public static boolean inSirius = false;
 
@@ -95,6 +97,8 @@ public class GrossHacks implements ClientModInitializer {
             if (client.player != null) tick();
         });
 
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> WithdrawalIO.write());
+
         FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container ->
                 ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"),
                         container, ResourcePackActivationType.NORMAL));
@@ -107,10 +111,11 @@ public class GrossHacks implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(
                 literal("show").executes(ctx -> showCommand(null))
                         .then(argument("chat", StringArgumentType.string())
-                                        .suggests(this::getSuggestions).executes(ctx ->
+                                        .suggests((ctx, builder) -> getSuggestions(builder)).executes(ctx ->
                                         showCommand(StringArgumentType.getString(ctx, "chat"))))
         ));
 
+        if (FabricLoader.getInstance().isModLoaded("handbook")) handbookAvailable = true;
         LOGGER.info("Ahhh hell no");
     }
 
@@ -256,6 +261,8 @@ public class GrossHacks implements ClientModInitializer {
                         Text.of("§3Nightmares arrive in: " + (GrossHacks.getTicks() / 20)), false);
             }
         }
+        if (GrossHacksConfig.INSTANCE.withdrawMenu) WalletManager.tick();
+        if (client.player.clientWorld.getTime() % 20 == 0) WalletManager.checkWallet();
         if (toggleGlowing.wasPressed()) {
             MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.of("§ePlayer glowing is now " + (
                     GrossHacksConfig.INSTANCE.disableGlowing ? "enabled" : "disabled")), false);
@@ -271,7 +278,7 @@ public class GrossHacks implements ClientModInitializer {
         inSirius = pos.getX() > 270 && pos.getZ() > 950 && pos.getX() < 380 && pos.getZ() < 1060;
     }
 
-    private CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
+    private CompletableFuture<Suggestions> getSuggestions(SuggestionsBuilder builder) {
         for (String chat : chats) builder.suggest(chat);
         return builder.buildFuture();
     }

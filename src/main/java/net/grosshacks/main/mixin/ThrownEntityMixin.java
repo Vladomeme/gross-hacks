@@ -20,8 +20,8 @@ import java.util.Optional;
 public abstract class ThrownEntityMixin {
 
 	@Unique
-	Style STYLE = Style.EMPTY.withColor(Formatting.GOLD).withBold(false).withItalic(false).withUnderline(false);
-
+    final Style STYLE = Style.EMPTY.withColor(Formatting.GOLD).withBold(false).withItalic(false).withUnderline(false);
+	//todo [Shame] button.
 	@Inject(method = "tick", at = @At(value = "TAIL"))
 	private void tick(CallbackInfo ci) {
 		if (!GrossHacksConfig.INSTANCE.potionInfoEnabled()) return;
