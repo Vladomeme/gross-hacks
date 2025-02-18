@@ -7,6 +7,8 @@ import net.minecraft.client.gui.ParentElement;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.util.math.MathHelper;
 
+import java.util.List;
+
 public class WalletListWidget extends ElementListWidget<WalletListEntry> {
 
     private boolean scrolling;
@@ -25,9 +27,20 @@ public class WalletListWidget extends ElementListWidget<WalletListEntry> {
 
     public void setEntries() {
         clearEntries();
-        for (Withdrawal withdrawal : WalletManager.entries) {
-            addEntry(new WalletListEntry(withdrawal));
+
+        List<Withdrawal> list = WalletManager.entries;
+        if (list.isEmpty()) return;
+
+        if (list.size() == 1) {
+            addEntry(new WalletListEntry(list.get(0), WalletListEntry.Pos.Only));
+            return;
         }
+        addEntry(new WalletListEntry(list.get(0), WalletListEntry.Pos.Top));
+        for (int i = 1; i < list.size() - 1; i++) {
+            addEntry(new WalletListEntry(list.get(i), WalletListEntry.Pos.Middle));
+        }
+        addEntry(new WalletListEntry(list.get(list.size() - 1), WalletListEntry.Pos.Bottom));
+
     }
 
     @Override

@@ -41,8 +41,8 @@ public final class Withdrawal {
     }
 
     public void withdraw() {
-        if (!WalletManager.withdrawReady) return;
-        WalletManager.onWithdraw();
+        if (!WalletManager.clickReady) return;
+        WalletManager.onClick();
 
         ClientPlayNetworkHandler nh = MinecraftClient.getInstance().getNetworkHandler();
         if (nh == null) return;

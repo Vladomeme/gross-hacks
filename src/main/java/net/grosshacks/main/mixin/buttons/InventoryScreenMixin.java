@@ -140,6 +140,11 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 		walletListWidget.setEntries();
 	}
 
+	@Override
+	public WalletListWidget gh$getWalletWidget() {
+		return walletListWidget;
+	}
+
 	@SuppressWarnings("unused")
 	public InventoryScreenMixin(PlayerScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
 		super(screenHandler, playerInventory, text);

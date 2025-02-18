@@ -5,6 +5,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
+import java.util.Collections;
 import java.util.List;
 
 public class WalletManager {
@@ -14,19 +15,19 @@ public class WalletManager {
     static final List<Withdrawal> entries = WithdrawalIO.read();
     static boolean walletAvailable = false;
 
-    static boolean withdrawReady = true;
-    static int withdrawCD = 5;
+    static boolean clickReady = true;
+    static int clickCD = 5;
 
     public static void tick() {
-        if (withdrawCD > 0) {
-            withdrawCD--;
-            if (withdrawCD == 0) withdrawReady = true;
+        if (clickCD > 0) {
+            clickCD--;
+            if (clickCD == 0) clickReady = true;
         }
     }
 
-    public static void onWithdraw() {
-        withdrawReady = false;
-        withdrawCD = 5;
+    public static void onClick() {
+        clickReady = false;
+        clickCD = 5;
     }
 
     public static void checkWallet() {
@@ -78,5 +79,30 @@ public class WalletManager {
 
     public static void removeEntry(Withdrawal withdrawal) {
         entries.remove(withdrawal);
+    }
+
+    public static void moveUp(Withdrawal withdrawal) {
+        if (!clickReady) return;
+        onClick();
+
+        int index = entries.indexOf(withdrawal);
+        if (index == -1) throw new RuntimeException("Moved withdrawal entry could not be found in the wallet manager");
+        if (index == 0) throw new RuntimeException("Tried to move up a top-most entry");
+
+        Collections.swap(entries, index, index - 1);
+        WithdrawalIO.shouldSave = true;
+    }
+
+    public static void moveDown(Withdrawal withdrawal) {
+        if (!clickReady) return;
+        onClick();
+
+        int index = entries.indexOf(withdrawal);
+        if (index == -1) throw new RuntimeException("Moved withdrawal entry could not be found in the wallet manager");
+        if (index == entries.size() - 1) throw new RuntimeException("Tried to move down a bottom-most entry");
+
+        Collections.swap(entries, index, index + 1);
+        WithdrawalIO.shouldSave = true;
+
     }
 }
