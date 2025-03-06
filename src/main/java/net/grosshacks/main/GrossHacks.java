@@ -17,6 +17,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.grosshacks.main.mixin.KeyBindingAccessor;
 import net.grosshacks.main.wallet.WalletManager;
 import net.grosshacks.main.wallet.WithdrawalIO;
+import net.hph.main.WhitelistManager;
+import net.hph.main.config.HPHConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -25,6 +27,7 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.Entity;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
@@ -281,5 +284,13 @@ public class GrossHacks implements ClientModInitializer {
     private CompletableFuture<Suggestions> getSuggestions(SuggestionsBuilder builder) {
         for (String chat : chats) builder.suggest(chat);
         return builder.buildFuture();
+    }
+
+    public static boolean glowOverrideEnabled() {
+        return HPHConfig.INSTANCE.overrideGrossHacksGlowing;
+    }
+
+    public static boolean shouldForceGlow(Entity entity) {
+        return WhitelistManager.shouldForceGlow(entity);
     }
 }
