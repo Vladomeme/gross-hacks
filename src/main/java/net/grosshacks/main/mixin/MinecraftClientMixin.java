@@ -1,6 +1,9 @@
 package net.grosshacks.main.mixin;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.grosshacks.main.GrossHacksConfig;
+import net.hph.main.WhitelistManager;
+import net.hph.main.config.HPHConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,7 +17,10 @@ public abstract class MinecraftClientMixin {
 
 	@Inject(method = "hasOutline", at = @At(value = "TAIL"), cancellable = true)
 	private void hasOutline(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-		if (GrossHacksConfig.INSTANCE.disableGlowing && entity instanceof PlayerEntity)
-			cir.setReturnValue(false);
+		if (GrossHacksConfig.INSTANCE.disableGlowing && entity instanceof PlayerEntity) {
+			if (FabricLoader.getInstance().isModLoaded("hph") && HPHConfig.INSTANCE.overrideGrossHacksGlowing)
+				cir.setReturnValue(WhitelistManager.shouldForceGlow(entity));
+			else cir.setReturnValue(false);
+		}
 	}
 }
