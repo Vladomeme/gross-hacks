@@ -29,11 +29,12 @@ public abstract class ThrownEntityMixin {
 			Optional<String> owner = getOwner(potion);
 			if (owner.isEmpty()) return;
 
-			Text name = potion.getStack().getName();
-			if (name.getString().equals("Alchemist's Potion")) return;
+			Text textName = potion.getStack().getName();
+			String name = textName.getString();
+			if (name.equals("Alchemist's Potion") || name.equals("Uncraftable Splash Potion")) return;
 
-			MutableText message = potion.getStack().getName().copy().append(Text.literal(" used by " + owner.get() + "! ").setStyle(STYLE));
-			if (name.getString().equals("Jar of Clucks")) {
+			MutableText message = textName.copy().append(Text.literal(" used by " + owner.get() + "! ").setStyle(STYLE));
+			if (name.equals("Jar of Clucks")) {
 				message.append(Text.literal("[Copy]").setStyle(Style.EMPTY.withColor(Formatting.AQUA)
 						.withUnderline(true).withBold(false)
 						.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, message.getString()))
