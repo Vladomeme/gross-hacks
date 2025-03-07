@@ -31,7 +31,7 @@ public abstract class ThrownEntityMixin {
 
 			Text textName = potion.getStack().getName();
 			String name = textName.getString();
-			if (name.equals("Alchemist's Potion") || name.equals("Uncraftable Splash Potion")) return;
+			if (name.equals("Alchemist's Potion") || name.equals("Splash Uncraftable Potion")) return;
 
 			MutableText message = textName.copy().append(Text.literal(" used by " + owner.get() + "! ").setStyle(STYLE));
 			if (name.equals("Jar of Clucks")) {
