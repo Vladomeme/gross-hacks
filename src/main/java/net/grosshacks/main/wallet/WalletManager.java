@@ -6,11 +6,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class WalletManager {
 
-    final static List<String> WALLETS = List.of("Experience Flask", "Experience Bucket", "Crystal Cluster", "Crystal Collector", "Piggy Bank", "Bag of Hoarding");
+    final static Set<String> WALLETS = new HashSet<>(List.of("Experience Flask", "Experience Bucket", "Crystal Cluster",
+            "Crystal Collector", "Piggy Bank", "Bag of Hoarding", "Sketched Bag of Hoarding"));
 
     static final List<Withdrawal> entries = WithdrawalIO.read();
     static boolean walletAvailable = false;
