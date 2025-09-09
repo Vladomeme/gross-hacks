@@ -69,7 +69,6 @@ public class GrossHacks implements ClientModInitializer {
     static int nightmareTicks = 1200;
 
     public static boolean handbookAvailable = false;
-    public static boolean shouldDismount = false;
     public static boolean inSirius = false;
 
     @Override
