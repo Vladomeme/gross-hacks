@@ -15,6 +15,6 @@ public class JsonOpsMixin {
 	@Inject(method = "getBooleanValue(Lcom/google/gson/JsonElement;)Lcom/mojang/serialization/DataResult;", remap = false, cancellable = true,
 			at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/DataResult;error(Ljava/util/function/Supplier;)Lcom/mojang/serialization/DataResult;"))
 	private void forceBooleanInput(JsonElement input, CallbackInfoReturnable<DataResult<Boolean>> cir) {
-		if (GrossHacksConfig.INSTANCE.chatPacketFix) cir.setReturnValue(DataResult.success(true));
+		if (GrossHacksConfig.INSTANCE.chatPacketFix) cir.setReturnValue(DataResult.success(false));
 	}
 }
