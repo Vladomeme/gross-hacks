@@ -18,10 +18,7 @@ public abstract class KeyboardInputMixin extends Input {
     private void tick(boolean slowDown, float f, CallbackInfo ci) {
         if (MinecraftClient.getInstance().player.hasVehicle()) {
             if (GrossHacksConfig.INSTANCE.rebindDismounting) this.sneaking = GrossHacks.unmountKey.wasPressed();
-            if (this.sneaking || GrossHacks.shouldDismount) GrossHacks.shouldDismount = true;
-            return;
         }
-        GrossHacks.shouldDismount = false;
         ((KeyBindingAccessor) GrossHacks.unmountKey).reset();
     }
 }
