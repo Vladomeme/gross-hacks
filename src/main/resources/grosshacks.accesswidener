@@ -1,0 +1,19 @@
+accessWidener	v2	 named
+mutable field net/minecraft/component/type/AttributeModifiersComponent BASE_CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/AttributeModifiersComponent CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/item/BlockPredicatesChecker FULL_CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/item/BlockPredicatesChecker CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/DyedColorComponent BASE_CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/DyedColorComponent CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/ItemEnchantmentsComponent BASE_CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/ItemEnchantmentsComponent CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/JukeboxPlayableComponent CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/UnbreakableComponent CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/component/type/ToolComponent$Rule CODEC Lcom/mojang/serialization/Codec;
+mutable field net/minecraft/enchantment/effect/AttributeEnchantmentEffect CODEC Lcom/mojang/serialization/MapCodec;
+accessible field net/minecraft/item/BlockPredicatesChecker predicates Ljava/util/List;
+accessible field net/minecraft/component/type/ItemEnchantmentsComponent enchantments Lit/unimi/dsi/fastutil/objects/Object2IntOpenHashMap;
+accessible field net/minecraft/component/type/ItemEnchantmentsComponent showInTooltip Z
+accessible method net/minecraft/component/type/ItemEnchantmentsComponent <init> (Lit/unimi/dsi/fastutil/objects/Object2IntOpenHashMap;Z)V
+accessible class net/minecraft/network/handler/PacketCodecDispatcher$PacketType
+accessible field net/minecraft/network/handler/PacketCodecDispatcher$PacketType id Ljava/lang/Object;

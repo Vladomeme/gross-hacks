@@ -85,6 +85,7 @@ public class GrossHacksConfig {
     public boolean brightBlight = true;
     public PotionInfo potionInfo = PotionInfo.Clucking;
     public boolean cleanLogs = false;
+    public boolean chatPacketFix = true;
 
     //Other
     public boolean generateTextures = true;
@@ -291,6 +292,14 @@ public class GrossHacksConfig {
                                 .description(OptionDescription.of(Text.literal(
                                         "Removes useless error/warning spam from game logs.")))
                                 .binding(false, () -> cleanLogs, newVal -> cleanLogs = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Fix chat equipment packets"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Fixes decoding of packets containing show_item hover events." +
+                                                "Should be disabled after 1.21 update.")))
+                                .binding(true, () -> chatPacketFix, newVal -> chatPacketFix = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
                         .build())
                 //OTHER

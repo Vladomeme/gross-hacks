@@ -18,6 +18,9 @@ repositories {
         name "Nucleoid"
     }
 }
+loom {
+	accessWidenerPath = file("src/main/resources/grosshacks.accesswidener")
+}
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
