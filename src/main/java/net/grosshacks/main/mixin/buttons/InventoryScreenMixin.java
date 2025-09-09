@@ -72,8 +72,8 @@ public abstract class InventoryScreenMixin extends AbstractInventoryScreen<Playe
 			addDrawableChild(walletListWidget = new WalletListWidget(5, 90, 250, height / 2 - 83));
 			walletListWidget.visible = false;
 
-			ButtonTextures texture = new ButtonTextures(new Identifier("grosshacks", "new"),
-					new Identifier("grosshacks", "new"));
+			ButtonTextures texture = new ButtonTextures(Identifier.of("grosshacks", "new"),
+					Identifier.of("grosshacks", "new"));
 			addDrawableChild(addButton = new TexturedButtonWidget(79, height / 2 - 99, 12, 12, texture,
 					button -> client.setScreen(new NewWithdrawalScreen(client.player.getInventory()))));
 			addButton.visible = false;

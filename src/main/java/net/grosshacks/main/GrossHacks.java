@@ -53,7 +53,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 public class GrossHacks implements ClientModInitializer {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("grosshacks");
-    private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static MinecraftClient client;
 
     public static final HashSet<String> projectileList = new HashSet<>();
     public static final HashMap<String, Float> tridentScales = new HashMap<>();
@@ -74,12 +74,11 @@ public class GrossHacks implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 
             @Override
             public Identifier getFabricId() {
-                return new Identifier("grosshacks", "resources");
+                return Identifier.of("grosshacks", "resources");
             }
 
             @Override
@@ -88,10 +87,10 @@ public class GrossHacks implements ClientModInitializer {
                 findScales(manager);
                 if (GrossHacksConfig.INSTANCE.generateTextures) generateButtons(manager);
                 else {
-                    stats = new ButtonTextures(new Identifier("grosshacks", "stats_unfocused"),
-                            new Identifier("grosshacks", "stats_focused"));
-                    charms = new ButtonTextures(new Identifier("grosshacks", "charms_unfocused"),
-                            new Identifier("grosshacks", "charms_focused"));
+                    stats = new ButtonTextures(Identifier.of("grosshacks", "stats_unfocused"),
+                            Identifier.of("grosshacks", "stats_focused"));
+                    charms = new ButtonTextures(Identifier.of("grosshacks", "charms_unfocused"),
+                            Identifier.of("grosshacks", "charms_focused"));
                 }
             }
         });
@@ -103,7 +102,7 @@ public class GrossHacks implements ClientModInitializer {
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> WithdrawalIO.write());
 
         FabricLoader.getInstance().getModContainer("grosshacks").ifPresent(container ->
-                ResourceManagerHelper.registerBuiltinResourcePack(new Identifier("grosshacks","clean_buttons"),
+                ResourceManagerHelper.registerBuiltinResourcePack(Identifier.of("grosshacks","clean_buttons"),
                         container, ResourcePackActivationType.NORMAL));
 
         unmountKey = KeyBindingHelper.registerKeyBinding(
@@ -119,6 +118,7 @@ public class GrossHacks implements ClientModInitializer {
         ));
 
         if (FabricLoader.getInstance().isModLoaded("handbook")) handbookAvailable = true;
+        client = MinecraftClient.getInstance();
         LOGGER.info("Ahhh hell no");
     }
 
@@ -169,7 +169,7 @@ public class GrossHacks implements ClientModInitializer {
         try {
             //UNFOCUSED----------------------------------------------------
             BufferedImage sourceUnfocused = ImageIO.read(rm.getResource(
-                    new Identifier("minecraft", "textures/gui/sprites/recipe_book/button.png")).get().getInputStream());
+                    Identifier.of("minecraft", "textures/gui/sprites/recipe_book/button.png")).get().getInputStream());
             BufferedImage imageUnfocused = new BufferedImage(20, 18, BufferedImage.TYPE_INT_ARGB);
             Graphics2D ctxUnfocused = imageUnfocused.createGraphics();
             ctxUnfocused.drawImage(sourceUnfocused, 0, 0, null);
@@ -185,7 +185,7 @@ public class GrossHacks implements ClientModInitializer {
             ctxCopy.drawImage(imageUnfocused, 0, 0, null);
 
             //charms
-            ctxUnfocused.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/charms_clean.png"))
+            ctxUnfocused.drawImage(ImageIO.read(rm.getResource(Identifier.of("grosshacks", "textures/gui/sprites/charms_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(imageUnfocused, "png", os);
@@ -193,7 +193,7 @@ public class GrossHacks implements ClientModInitializer {
                     new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
 
             //stats
-            ctxCopy.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/stats_clean.png"))
+            ctxCopy.drawImage(ImageIO.read(rm.getResource(Identifier.of("grosshacks", "textures/gui/sprites/stats_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             os = new ByteArrayOutputStream();
             ImageIO.write(imageCopy, "png", os);
@@ -202,7 +202,7 @@ public class GrossHacks implements ClientModInitializer {
 
             //FOCUSED----------------------------------------------------
             BufferedImage sourceFocused = ImageIO.read(rm.getResource(
-                    new Identifier("minecraft", "textures/gui/sprites/recipe_book/button_highlighted.png")).get().getInputStream());
+                    Identifier.of("minecraft", "textures/gui/sprites/recipe_book/button_highlighted.png")).get().getInputStream());
             BufferedImage imageFocused = new BufferedImage(20, 18, BufferedImage.TYPE_INT_ARGB);
             Graphics2D ctxFocused = imageFocused.createGraphics();
             ctxFocused.drawImage(sourceFocused, 0, 0, null);
@@ -218,7 +218,7 @@ public class GrossHacks implements ClientModInitializer {
             ctxCopy.drawImage(imageFocused, 0, 0, null);
 
             //charms
-            ctxFocused.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/charms_clean.png"))
+            ctxFocused.drawImage(ImageIO.read(rm.getResource(Identifier.of("grosshacks", "textures/gui/sprites/charms_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             os = new ByteArrayOutputStream();
             ImageIO.write(imageFocused, "png", os);
@@ -226,7 +226,7 @@ public class GrossHacks implements ClientModInitializer {
                     new NativeImageBackedTexture(NativeImage.read(new ByteArrayInputStream(os.toByteArray()))));
 
             //stats
-            ctxCopy.drawImage(ImageIO.read(rm.getResource(new Identifier("grosshacks", "textures/gui/sprites/stats_clean.png"))
+            ctxCopy.drawImage(ImageIO.read(rm.getResource(Identifier.of("grosshacks", "textures/gui/sprites/stats_clean.png"))
                     .get().getInputStream()), 0, 0, null);
             os = new ByteArrayOutputStream();
             ImageIO.write(imageCopy, "png", os);
@@ -239,10 +239,10 @@ public class GrossHacks implements ClientModInitializer {
         }
         catch (Exception e) {
             LOGGER.error("Failed to dynamically generate Gross Hacks button icons.");
-            charms = new ButtonTextures(new Identifier("grosshacks", "charms_unfocused"),
-                    new Identifier("grosshacks", "charms_focused"));
-            stats = new ButtonTextures(new Identifier("grosshacks", "stats_unfocused"),
-                    new Identifier("grosshacks", "stats_focused"));
+            charms = new ButtonTextures(Identifier.of("grosshacks", "charms_unfocused"),
+                    Identifier.of("grosshacks", "charms_focused"));
+            stats = new ButtonTextures(Identifier.of("grosshacks", "stats_unfocused"),
+                    Identifier.of("grosshacks", "stats_focused"));
         }
     }
 

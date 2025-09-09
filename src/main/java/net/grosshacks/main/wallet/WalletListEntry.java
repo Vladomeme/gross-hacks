@@ -38,20 +38,20 @@ public class WalletListEntry extends ElementListWidget.Entry<WalletListEntry> {
 
         withdrawButton = ButtonWidget.builder(Text.of(""), button -> withdrawal.withdraw()).dimensions(0, 0, 50, 20).build();
 
-        ButtonTextures texture1 = new ButtonTextures(new Identifier("grosshacks", "remove"),
-                new Identifier("grosshacks", "remove"));
+        ButtonTextures texture1 = new ButtonTextures(Identifier.of("grosshacks", "remove"),
+                Identifier.of("grosshacks", "remove"));
         removeButton = new TexturedButtonWidget(0, 0, 12, 12, texture1, button -> {
             withdrawal.remove();
             ((MixinUtil) Objects.requireNonNull(MinecraftClient.getInstance().currentScreen)).gh$updateEntries();
         });
-        ButtonTextures texture2 = new ButtonTextures(new Identifier("grosshacks", "up_unfocused"),
-                new Identifier("grosshacks", "up_focused"));
+        ButtonTextures texture2 = new ButtonTextures(Identifier.of("grosshacks", "up_unfocused"),
+                Identifier.of("grosshacks", "up_focused"));
         upButton = new TexturedButtonWidget(0, 0, 7, 4, texture2, button -> {
             WalletManager.moveUp(withdrawal);
             ((MixinUtil) Objects.requireNonNull(MinecraftClient.getInstance().currentScreen)).gh$updateEntries();
         });
-        ButtonTextures texture3 = new ButtonTextures(new Identifier("grosshacks", "down_unfocused"),
-                new Identifier("grosshacks", "down_focused"));
+        ButtonTextures texture3 = new ButtonTextures(Identifier.of("grosshacks", "down_unfocused"),
+                Identifier.of("grosshacks", "down_focused"));
         downButton = new TexturedButtonWidget(0, 0, 7, 4, texture3, button -> {
             WalletManager.moveDown(withdrawal);
             ((MixinUtil) Objects.requireNonNull(MinecraftClient.getInstance().currentScreen)).gh$updateEntries();

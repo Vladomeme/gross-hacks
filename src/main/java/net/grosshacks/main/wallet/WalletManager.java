@@ -2,6 +2,9 @@ package net.grosshacks.main.wallet;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
@@ -33,6 +36,7 @@ public class WalletManager {
         clickCD = 5;
     }
 
+    @SuppressWarnings({"deprecation", "DataFlowIssue"})
     public static void checkWallet() {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) {
@@ -41,8 +45,12 @@ public class WalletManager {
         }
 
         for (ItemStack stack : player.getInventory().main) {
-            if (stack.getNbt() == null) continue;
-            String name = stack.getNbt().getCompound("plain").getCompound("display").getString("Name");
+            ComponentMap components = stack.getComponents();
+            if (!components.contains(DataComponentTypes.CUSTOM_DATA)) continue;
+
+            NbtCompound nbt = components.get(DataComponentTypes.CUSTOM_DATA).getNbt();
+            if (nbt == null) continue;
+            String name = nbt.getCompound("plain").getCompound("display").getString("Name");
             if (WALLETS.contains(name)) {
                 walletAvailable = true;
                 return;
@@ -75,7 +83,7 @@ public class WalletManager {
             hope.putString("Infuser", UUID);
         }
 
-        stack.setNbt(nbt);
+        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
         stack.setCount(count);
         return stack;
     }

@@ -4,7 +4,12 @@ import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
 import net.grosshacks.main.util.MixinUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
@@ -12,9 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,7 +28,6 @@ import java.util.Objects;
 @Mixin(TridentEntity.class)
 public abstract class TridentEntityMixin extends PersistentProjectileEntity implements MixinUtil {
 
-    @Shadow @Final private static ItemStack DEFAULT_STACK;
     @Unique ItemStack trident;
     @Unique boolean checked = false;
     @Unique float tridentScale = GrossHacksConfig.INSTANCE.tridentScale;
@@ -41,8 +43,9 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
     private void getTridentInfo() {
         ItemStack item;
         PlayerEntity nearestPlayer = Objects.requireNonNull(MinecraftClient.getInstance().player);
+        Entity owner = getOwner();
 
-        if (getOwner() != null) item = getOwner().getHandItems().iterator().next();
+        if (owner instanceof LivingEntity le) item = le.getHandItems().iterator().next();
         else {
             nearestPlayer = getWorld().getClosestPlayer((TridentEntity) (Object) this, 10);
             if (nearestPlayer != null) item = nearestPlayer.getInventory().getMainHandStack();
@@ -74,10 +77,14 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
         if (scale != null) tridentScale = scale;
     }
 
+    //lord give me strength
+    @SuppressWarnings({"deprecation", "DataFlowIssue"})
     @Unique
     public void checkCustomProjectile() {
-        NbtCompound nbt = trident.getNbt();
-        if (nbt == null) return;
+        ComponentMap components = trident.getComponents();
+        if (components.isEmpty() || !components.contains(DataComponentTypes.CUSTOM_DATA)) return;
+
+        NbtCompound nbt = components.get(DataComponentTypes.CUSTOM_DATA).getNbt().copy();
 
         //Replacing monumenta 'plain' name
         if (nbt.contains("plain")) {
@@ -98,11 +105,11 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
                 nbt.getCompound("display").putString("Name", name + "_projectile");
             }
         }
-        trident.setNbt(nbt);
+        trident.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
     }
 
     @SuppressWarnings("unused")
     protected TridentEntityMixin(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
-        super(entityType, world, DEFAULT_STACK);
+        super(entityType, world);
     }
 }

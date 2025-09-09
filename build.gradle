@@ -3,8 +3,8 @@ plugins {
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -27,8 +27,8 @@ dependencies {
 	modCompileOnly("com.terraformersmc:modmenu:${project.modmenu}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
-    modImplementation("eu.pb4:placeholder-api:2.4.0-pre.1+1.20.4")
-	modImplementation("dev.isxander:yet-another-config-lib:3.6.1+1.20.4-fabric")
+    modImplementation("eu.pb4:placeholder-api:2.4.2+1.21")
+	modImplementation("dev.isxander:yet-another-config-lib:3.6.2+1.21-fabric")
 	modImplementation files(".gradle/handbook-fabric-1.20.4-beta3.5.jar")
 	modImplementation files(".gradle/hph-1.20.4-1.1.0.jar")
 }
@@ -42,7 +42,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 21
 }
 
 java {

@@ -2,7 +2,10 @@ package net.grosshacks.main.wallet;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
@@ -56,8 +59,13 @@ public final class Withdrawal {
         WithdrawalIO.shouldSave = true;
     }
 
+    @SuppressWarnings({"deprecation", "DataFlowIssue"})
     public static String getName(ItemStack stack) {
-        return Objects.requireNonNull(stack.getNbt()).getCompound("plain").getCompound("display").getString("Name");
+        ComponentMap components = stack.getComponents();
+        if (!components.contains(DataComponentTypes.CUSTOM_DATA)) return "";
+
+        NbtCompound nbt = components.get(DataComponentTypes.CUSTOM_DATA).getNbt();
+        return Objects.requireNonNull(nbt).getCompound("plain").getCompound("display").getString("Name");
     }
 
     public ItemStack left() {

@@ -2,12 +2,13 @@ package net.grosshacks.main.mixin;
 
 import net.grosshacks.main.GrossHacksConfig;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.RecipeInputInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
@@ -21,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerScreenHandler.class)
-public abstract class PlayerScreenHandlerMixin extends AbstractRecipeScreenHandler<RecipeInputInventory> {
+public abstract class PlayerScreenHandlerMixin extends AbstractRecipeScreenHandler<CraftingRecipeInput, CraftingRecipe> {
 
     @Unique
     int slot;
@@ -35,10 +36,10 @@ public abstract class PlayerScreenHandlerMixin extends AbstractRecipeScreenHandl
 
     @SuppressWarnings("DataFlowIssue")
     @Redirect(method = "quickMove", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/entity/mob/MobEntity;getPreferredEquipmentSlot(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/entity/EquipmentSlot;"))
-    private EquipmentSlot getPreferredEquipmentSlot(ItemStack itemStack) {
+            target = "Lnet/minecraft/entity/player/PlayerEntity;getPreferredEquipmentSlot(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/entity/EquipmentSlot;"))
+    private EquipmentSlot getPreferredEquipmentSlot(PlayerEntity player, ItemStack itemStack) {
         if (GrossHacksConfig.INSTANCE.offhandEquip && slot != 45) {
-            for (Text line : itemStack.getTooltip(MinecraftClient.getInstance().player, TooltipContext.BASIC)) {
+            for (Text line : itemStack.getTooltip(Item.TooltipContext.DEFAULT, MinecraftClient.getInstance().player, TooltipType.BASIC)) {
                 if (line.getString().equals("When in Off Hand:")) {
                     MinecraftClient.getInstance().interactionManager.clickSlot(
                             this.syncId, slot, 40, SlotActionType.SWAP, MinecraftClient.getInstance().player);
@@ -47,7 +48,7 @@ public abstract class PlayerScreenHandlerMixin extends AbstractRecipeScreenHandl
                 }
             }
         }
-        return MobEntity.getPreferredEquipmentSlot(itemStack);
+        return player.getPreferredEquipmentSlot(itemStack);
     }
 
     @Inject(method = "quickMove", at = @At(value = "INVOKE",

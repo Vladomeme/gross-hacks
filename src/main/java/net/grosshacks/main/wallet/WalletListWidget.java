@@ -21,7 +21,6 @@ public class WalletListWidget extends ElementListWidget<WalletListEntry> {
         setX(left);
         setEntries();
 
-        setRenderBackground(false);
         setRenderHeader(false, 0);
     }
 
@@ -32,14 +31,14 @@ public class WalletListWidget extends ElementListWidget<WalletListEntry> {
         if (list.isEmpty()) return;
 
         if (list.size() == 1) {
-            addEntry(new WalletListEntry(list.get(0), WalletListEntry.Pos.Only));
+            addEntry(new WalletListEntry(list.getFirst(), WalletListEntry.Pos.Only));
             return;
         }
-        addEntry(new WalletListEntry(list.get(0), WalletListEntry.Pos.Top));
+        addEntry(new WalletListEntry(list.getFirst(), WalletListEntry.Pos.Top));
         for (int i = 1; i < list.size() - 1; i++) {
             addEntry(new WalletListEntry(list.get(i), WalletListEntry.Pos.Middle));
         }
-        addEntry(new WalletListEntry(list.get(list.size() - 1), WalletListEntry.Pos.Bottom));
+        addEntry(new WalletListEntry(list.getLast(), WalletListEntry.Pos.Bottom));
 
     }
 
@@ -51,7 +50,7 @@ public class WalletListWidget extends ElementListWidget<WalletListEntry> {
     }
 
     @Override
-    protected int getScrollbarPositionX() {
+    protected int getScrollbarX() {
         return getX() + getWidth() + 2;
     }
 
@@ -62,9 +61,10 @@ public class WalletListWidget extends ElementListWidget<WalletListEntry> {
 
     @Override
     protected void updateScrollingState(double mouseX, double mouseY, int button) {
-        scrolling = button == 0 && mouseX >= (double) getScrollbarPositionX() && mouseX < (double) (getScrollbarPositionX() + 6);
+        scrolling = button == 0 && mouseX >= (double) getScrollbarX() && mouseX < (double) (getScrollbarX() + 6);
     }
 
+    @SuppressWarnings("RedundantCast")
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         updateScrollingState(mouseX, mouseY, button);

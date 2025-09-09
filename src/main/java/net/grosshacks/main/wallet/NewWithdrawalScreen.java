@@ -6,8 +6,11 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
@@ -116,6 +119,7 @@ public class NewWithdrawalScreen extends HandledScreen<NewWithdrawalScreenHandle
         MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.of("New withdrawal added."));
     }
 
+    @SuppressWarnings({"deprecation", "DataFlowIssue"})
     @Override
     protected void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType) {
         if (slot == null) return;
@@ -124,10 +128,16 @@ public class NewWithdrawalScreen extends HandledScreen<NewWithdrawalScreenHandle
                 slot.setStack(ItemStack.EMPTY);
                 validate();
             }
-            else if (slot.getStack() != null && slot.getStack() != ItemStack.EMPTY && slot.getStack().getNbt() != null
-                    && slot.getStack().getNbt().getCompound("Monumenta").getString("Tier").equals("currency")) {
-                (button == 0 ? leftAmountField : rightAmountField).setText("1");
-                getScreenHandler().setSlot(button, slot.getStack().copyWithCount(1));
+            else if (slot.getStack() != null && slot.getStack() != ItemStack.EMPTY) {
+                ComponentMap components = slot.getStack().getComponents();
+                if (!components.contains(DataComponentTypes.CUSTOM_DATA)) return;
+
+                NbtCompound nbt = components.get(DataComponentTypes.CUSTOM_DATA).getNbt();
+
+                if (nbt != null && nbt.getCompound("Monumenta").getString("Tier").equals("currency")) {
+                    (button == 0 ? leftAmountField : rightAmountField).setText("1");
+                    getScreenHandler().setSlot(button, slot.getStack().copyWithCount(1));
+                }
             }
         }
     }
