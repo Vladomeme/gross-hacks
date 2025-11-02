@@ -45,14 +45,14 @@ public class WithdrawalIO {
             writer.setIndent("    ");
             List<ProtoWithdrawal> list = new ArrayList<>(WalletManager.entries.size());
             for (Withdrawal withdrawal : WalletManager.entries) {
-                String itemTypeLeft = withdrawal.left().getItem().toString();
+                String itemTypeLeft = withdrawal.left().getItem().toString().split(":")[1];
                 String itemNameLeft = Withdrawal.getName(withdrawal.left());
                 int countLeft = withdrawal.left().getCount();
                 if (withdrawal.right() == null || withdrawal.right() == ItemStack.EMPTY) {
                     list.add(new ProtoWithdrawal(itemTypeLeft, itemNameLeft, countLeft, null, null, 0));
                     continue;
                 }
-                String itemTypeRight = withdrawal.right().getItem().toString();
+                String itemTypeRight = withdrawal.right().getItem().toString().split(":")[1];
                 String itemNameRight = Withdrawal.getName(withdrawal.right());
                 int countRight = withdrawal.right().getCount();
                 list.add(new ProtoWithdrawal(itemTypeLeft, itemNameLeft, countLeft, itemTypeRight, itemNameRight, countRight));

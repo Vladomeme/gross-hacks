@@ -22,16 +22,16 @@ public final class Withdrawal {
     }
 
     public Withdrawal(String itemType, String itemName, int count) {
-        ItemStack stack = Registries.ITEM.get(Identifier.of("minecraft", itemType)).getDefaultStack();
+        ItemStack stack = Registries.ITEM.get(Identifier.of(itemType)).getDefaultStack();
         this.left = WalletManager.getRPItem(stack, itemName, "", count);
         this.right = null;
     }
 
     public Withdrawal(String itemTypeLeft, String itemNameLeft, int countLeft, String itemTypeRight, String itemNameRight, int countRight) {
-        ItemStack left = Registries.ITEM.get(Identifier.of("minecraft", itemTypeLeft)).getDefaultStack();
+        ItemStack left = Registries.ITEM.get(Identifier.of(itemTypeLeft)).getDefaultStack();
         this.left = WalletManager.getRPItem(left, itemNameLeft, "", countLeft);
 
-        ItemStack right = Registries.ITEM.get(Identifier.of("minecraft", itemTypeRight)).getDefaultStack();
+        ItemStack right = Registries.ITEM.get(Identifier.of(itemTypeRight)).getDefaultStack();
         this.right = WalletManager.getRPItem(right, itemNameRight, "", countRight);
     }
 
