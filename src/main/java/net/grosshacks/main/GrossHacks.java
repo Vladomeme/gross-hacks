@@ -57,6 +57,7 @@ public class GrossHacks implements ClientModInitializer {
 
     public static final HashSet<String> projectileList = new HashSet<>();
     public static final HashMap<String, Float> tridentScales = new HashMap<>();
+    public static final HashSet<String> modelledTridents = new HashSet<>();
 
     public static KeyBinding unmountKey;
     public static KeyBinding toggleGlowing;
@@ -84,6 +85,8 @@ public class GrossHacks implements ClientModInitializer {
             public void reload(ResourceManager manager) {
                 findProjectiles(manager);
                 findScales(manager);
+                findModelledTridents(manager);
+
                 if (GrossHacksConfig.INSTANCE.generateTextures) generateButtons(manager);
                 else {
                     stats = new ButtonTextures(Identifier.of("grosshacks", "stats_unfocused"),
@@ -131,7 +134,7 @@ public class GrossHacks implements ClientModInitializer {
         return 1;
     }
 
-    public static void findProjectiles(ResourceManager manager) {
+    private static void findProjectiles(ResourceManager manager) {
         projectileList.clear();
 
         manager.findResources("optifine", id -> id.getPath().endsWith("projectile.png")).keySet().forEach(id -> {
@@ -142,7 +145,7 @@ public class GrossHacks implements ClientModInitializer {
         });
     }
 
-    public static void findScales(ResourceManager manager) {
+    private static void findScales(ResourceManager manager) {
         tridentScales.clear();
 
         manager.findResources("optifine", id -> id.getPath().endsWith("trident_scaling.txt")).keySet().forEach(id -> {
@@ -157,13 +160,31 @@ public class GrossHacks implements ClientModInitializer {
                 }
             }
             catch (IOException e) {
-                throw new RuntimeException("An error occured while trying to read " + id.getPath());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private static void findModelledTridents(ResourceManager manager) {
+        modelledTridents.clear();
+
+        manager.findResources("optifine", id -> id.getPath().endsWith("trident.properties")).forEach((id, resource) -> {
+            try {
+                resource.getReader().lines().forEach(line -> {
+                    if (line.startsWith("name.")) {
+                        int index = line.indexOf('=');
+                        if (index != -1) modelledTridents.add(line.substring(index + 1));
+                    }
+                });
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public static void generateButtons(ResourceManager rm) {
+    private static void generateButtons(ResourceManager rm) {
         TextureManager tm = MinecraftClient.getInstance().getTextureManager();
         try {
             //UNFOCUSED----------------------------------------------------
@@ -249,18 +270,14 @@ public class GrossHacks implements ClientModInitializer {
         nightmareTicks = ticks;
     }
 
-    public static int getTicks() {
-        return nightmareTicks;
-    }
-
-    public static void tick() {
+    private static void tick() {
         if (client.player == null) return;
         if (GrossHacksConfig.INSTANCE.nightmareTimer &&
                 client.player.getWorld().getRegistryKey().getValue().toString().endsWith("gallery")) {
             if (nightmareTicks > 0) nightmareTicks--;
-            if (GrossHacks.getTicks() / 20 <= GrossHacksConfig.INSTANCE.timeRemaining) {
+            if (nightmareTicks / 20 <= GrossHacksConfig.INSTANCE.timeRemaining) {
                 client.inGameHud.setOverlayMessage(
-                        Text.of("§3Nightmares arrive in: " + (GrossHacks.getTicks() / 20)), false);
+                        Text.of("§3Nightmares arrive in: " + (nightmareTicks / 20)), false);
             }
         }
         if (GrossHacksConfig.INSTANCE.withdrawMenu) WalletManager.tick();

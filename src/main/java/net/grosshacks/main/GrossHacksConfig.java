@@ -72,7 +72,6 @@ public class GrossHacksConfig {
     public boolean withdrawMenu = true;
     public boolean disableInteractions = false;
     public boolean loomAntighost = true;
-    public boolean fixMountDesync = true;
     public boolean rebindDismounting = false;
     public boolean nightmareTimer = false;
     public int timeRemaining = 60;
@@ -209,13 +208,6 @@ public class GrossHacksConfig {
                                 .description(OptionDescription.of(Text.literal(
                                         "Prevents Worldshaper's Loom from going into ghost mode when placed on the ground.")))
                                 .binding(true, () -> loomAntighost, newVal -> loomAntighost = newVal)
-                                .controller(TickBoxControllerBuilder::create).build())
-
-                        .option(Option.<Boolean>createBuilder()
-                                .name(Text.literal("Fix mount desync"))
-                                .description(OptionDescription.of(Text.literal(
-                                        "Ignores server when it tells you to dismount without actually dismounting you server side.")))
-                                .binding(true, () -> fixMountDesync, newVal -> fixMountDesync = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
