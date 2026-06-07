@@ -39,6 +39,11 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
 
     @Unique
     private void getTridentInfo() {
+        if (hasCustomName() && GrossHacks.modelledTridents.contains(Objects.requireNonNull(getCustomName()).getString())) {
+            trident = null;
+            return;
+        }
+
         ItemStack item;
         PlayerEntity nearestPlayer = Objects.requireNonNull(MinecraftClient.getInstance().player);
 
