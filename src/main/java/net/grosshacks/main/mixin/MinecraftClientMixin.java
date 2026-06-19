@@ -16,7 +16,8 @@ public abstract class MinecraftClientMixin {
 
 	@Inject(method = "hasOutline", at = @At(value = "TAIL"), cancellable = true)
 	private void hasOutline(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-		if (GrossHacksConfig.INSTANCE.disableGlowing && entity instanceof PlayerEntity) {
+		if (GrossHacksConfig.INSTANCE.disableGlowing && entity instanceof PlayerEntity player) {
+			if (player.getScore() == 0 || player.getName().getString().charAt(0) == '|') return;
 			if (FabricLoader.getInstance().isModLoaded("hph")) {
 				if (GrossHacks.glowOverrideEnabled()) cir.setReturnValue(GrossHacks.shouldForceGlow(entity));
 			}
