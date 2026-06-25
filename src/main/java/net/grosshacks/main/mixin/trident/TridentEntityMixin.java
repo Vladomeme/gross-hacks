@@ -45,7 +45,8 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
         }
 
         ItemStack item;
-        PlayerEntity nearestPlayer = Objects.requireNonNull(MinecraftClient.getInstance().player);
+        PlayerEntity nearestPlayer = MinecraftClient.getInstance().player;
+        if (nearestPlayer == null) return;
 
         if (getOwner() != null) item = getOwner().getHandItems().iterator().next();
         else {
