@@ -15,14 +15,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Optional;
 
+//config -> potionInfo
 @Mixin(ThrownEntity.class)
 public abstract class ThrownEntityMixin {
 
-	@Unique
-    final Style STYLE = Style.EMPTY.withColor(Formatting.GOLD).withBold(false).withItalic(false).withUnderline(false);
+	@Unique final Style STYLE = Style.EMPTY.withColor(Formatting.GOLD).withBold(false).withItalic(false).withUnderline(false);
 
 	@Inject(method = "tick", at = @At(value = "TAIL"))
-	private void tick(CallbackInfo ci) {
+	private void gh$tick(CallbackInfo ci) {
 		if (!GrossHacksConfig.INSTANCE.potionInfoEnabled()) return;
 
 		if (((ThrownEntity) (Object) this) instanceof PotionEntity potion && potion.age == 1) {

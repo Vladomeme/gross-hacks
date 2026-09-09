@@ -15,10 +15,11 @@ import java.util.UUID;
 @Mixin(FieldDecoder.class)
 public abstract class FieldDecoderMixin<A> extends MapDecoder.Implementation<A> {
 
+	//bypass for missing id field
 	@SuppressWarnings("unchecked")
     @Inject(method = "decode", remap = false, cancellable = true,
 			at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/DataResult;error(Ljava/util/function/Supplier;)Lcom/mojang/serialization/DataResult;"))
-	private <T> void bypassIdField(DynamicOps<T> ops, MapLike<T> input, CallbackInfoReturnable<DataResult<A>> cir) {
+	private <T> void gh$decode(DynamicOps<T> ops, MapLike<T> input, CallbackInfoReturnable<DataResult<A>> cir) {
 		if (GrossHacksConfig.INSTANCE.chatPacketFix && getName().equals("id"))
 			cir.setReturnValue((DataResult<A>) DataResult.success(Identifier.of(UUID.randomUUID().toString())));
 	}

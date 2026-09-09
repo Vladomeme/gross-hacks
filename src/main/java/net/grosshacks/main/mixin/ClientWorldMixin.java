@@ -16,11 +16,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//config -> muteHorns
 @Mixin(ClientWorld.class)
 public class ClientWorldMixin {
 
 	@Inject(method = "playSoundFromEntity*", at = @At(value = "HEAD"), cancellable = true)
-	private void playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, RegistryEntry<SoundEvent> sound,
+	private void gh$playSoundFromEntity(@Nullable PlayerEntity except, Entity entity, RegistryEntry<SoundEvent> sound,
 									 SoundCategory category, float volume, float pitch, long seed, CallbackInfo ci) {
 		if (!GrossHacksConfig.INSTANCE.muteHorns) return;
 

@@ -20,11 +20,11 @@ public class MobSpawnerBlockEntityRendererMixin {
 
 	@Inject(method = "render(Lnet/minecraft/block/entity/MobSpawnerBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V",
 			at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/block/entity/MobSpawnerBlockEntity;getLogic()Lnet/minecraft/block/spawner/MobSpawnerLogic;"), cancellable = true)
-	private void render(MobSpawnerBlockEntity blockEntity, float f, MatrixStack matrices,
+	private void gh$render(MobSpawnerBlockEntity blockEntity, float f, MatrixStack matrices,
 						VertexConsumerProvider vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-		if (GrossHacksConfig.INSTANCE.spawnerCulling &&
-				!isPlayerInRange(Objects.requireNonNull(blockEntity.getWorld()), blockEntity.getPos(),
-						((MobSpawnerLogicAccessor) blockEntity.getLogic()).getRequiredPlayerRange()))
+		if (GrossHacksConfig.INSTANCE.spawnerCulling
+				&& !isPlayerInRange(Objects.requireNonNull(blockEntity.getWorld()), blockEntity.getPos(),
+						((MobSpawnerLogicAccessor) blockEntity.getLogic()).gh$getRequiredPlayerRange()))
 			ci.cancel();
 	}
 

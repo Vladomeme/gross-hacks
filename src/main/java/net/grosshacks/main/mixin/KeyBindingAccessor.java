@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface KeyBindingAccessor {
 
     @Invoker("reset")
-    void reset();
+    void gh$reset();
 }
 
 

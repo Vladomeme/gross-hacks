@@ -13,7 +13,7 @@ public abstract class BlockItemMixin {
 
 	@WrapWithCondition(method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;decrementUnlessCreative(ILnet/minecraft/entity/LivingEntity;)V"))
-	private boolean place(ItemStack itemStack, int amount, LivingEntity entity) {
+	private boolean gh$place(ItemStack itemStack, int amount, LivingEntity entity) {
 		if (GrossHacksConfig.INSTANCE.loomAntighost) {
             return !itemStack.getName().getString().equals("Worldshaper's Loom");
 		}

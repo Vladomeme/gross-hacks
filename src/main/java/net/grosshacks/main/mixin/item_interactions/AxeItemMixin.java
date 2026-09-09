@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class AxeItemMixin {
 
 	@Inject(method = "useOnBlock", at = @At(value = "HEAD"), cancellable = true)
-	private void useOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-		if (GrossHacksConfig.INSTANCE.disableInteractions)
+	private void gh$useOnBlock(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
+		if (GrossHacksConfig.INSTANCE.disableToolInteractions)
 			cir.setReturnValue(ActionResult.PASS);
 	}
 }

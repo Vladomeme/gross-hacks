@@ -13,11 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.UUID;
 
+//config -> blightAlert
 @Mixin(BossBarHud.class)
 public class BossBarHudMixin {
 
 	@Inject(method = "handlePacket", at = @At(value = "TAIL"))
-	private void handlePacket(BossBarS2CPacket packet, CallbackInfo ci) {
+	private void gh$handlePacket(BossBarS2CPacket packet, CallbackInfo ci) {
 		if (!GrossHacksConfig.INSTANCE.blightAlert) return;
 
 		packet.accept(new BossBarS2CPacket.Consumer() {

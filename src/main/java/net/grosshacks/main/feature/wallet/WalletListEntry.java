@@ -1,4 +1,4 @@
-package net.grosshacks.main.wallet;
+package net.grosshacks.main.feature.wallet;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -107,14 +107,7 @@ public class WalletListEntry extends ElementListWidget.Entry<WalletListEntry> {
             context.drawItem(stackRight, left + 30, top + 2);
             context.drawItemInSlot(tr, stackRight, left + 30, top + 2);
         }
-
         RenderSystem.disableScissor();
-        if (removeButton.isMouseOver(mouseX, mouseY))
-            context.drawTooltip(tr, Text.of("Delete"), mouseX, mouseY);
-        if (upButton.isMouseOver(mouseX, mouseY))
-            context.drawTooltip(tr, Text.of("Move up"), mouseX, mouseY);
-        if (downButton.isMouseOver(mouseX, mouseY))
-            context.drawTooltip(tr, Text.of("Move down"), mouseX, mouseY);
         RenderSystem.disableBlend();
     }
 

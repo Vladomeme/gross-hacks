@@ -1,15 +1,19 @@
-package net.grosshacks.main.wallet;
+package net.grosshacks.main.feature.wallet;
 
 import net.grosshacks.main.util.Colours;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.ParentElement;
 import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.List;
 
 public class WalletListWidget extends ElementListWidget<WalletListEntry> {
+
+    private final TextRenderer tr = MinecraftClient.getInstance().textRenderer;
 
     private boolean scrolling;
     public final int listWidth;
@@ -47,6 +51,16 @@ public class WalletListWidget extends ElementListWidget<WalletListEntry> {
         context.drawBorder(getX() - 1, getY(), getWidth() + 2, getHeight() + 100, Colours.border());
         context.fill(getX(), getY(), getX() + getWidth() + 1, getY() + getHeight() + 100, Colours.backgroundAlt());
         super.renderWidget(context, mouseX, mouseY, delta);
+        for (WalletListEntry entry : children()) {
+            if (entry.isMouseOver(mouseX, mouseY)) {
+                context.getMatrices().push();
+                context.getMatrices().translate(0, 0, 1000);
+                if (entry.removeButton.isMouseOver(mouseX, mouseY)) context.drawTooltip(tr, Text.of("Delete"), mouseX, mouseY);
+                else if (entry.upButton.isMouseOver(mouseX, mouseY)) context.drawTooltip(tr, Text.of("Move up"), mouseX, mouseY);
+                else if (entry.downButton.isMouseOver(mouseX, mouseY)) context.drawTooltip(tr, Text.of("Move down"), mouseX, mouseY);
+                context.getMatrices().pop();
+            }
+        }
     }
 
     @Override
@@ -106,5 +120,15 @@ public class WalletListWidget extends ElementListWidget<WalletListEntry> {
     public boolean isMouseOver(double mouseX, double mouseY) {
         return mouseY >= (double)this.getY() - 20 && mouseY <= (double)this.getBottom() + 10
                 && mouseX >= (double)this.getX() - 10 && mouseX <= (double)this.getRight() + 10;
+    }
+
+    @Override
+    protected void drawMenuListBackground(DrawContext context) {
+
+    }
+
+    @Override
+    protected void drawHeaderAndFooterSeparators(DrawContext context) {
+
     }
 }

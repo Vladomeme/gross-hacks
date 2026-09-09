@@ -1,4 +1,4 @@
-package net.grosshacks.main.wallet;
+package net.grosshacks.main.feature.wallet;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -71,7 +71,7 @@ public class WalletManager {
         plain.put("display", display);
         display.putString("Name", name);
 
-        if (!UUID.isEmpty()) {
+        if (UUID != null) {
             NbtCompound monumenta = new NbtCompound();
             nbt.put("Monumenta", monumenta);
             NbtCompound playerModified = new NbtCompound();

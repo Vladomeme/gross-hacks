@@ -23,7 +23,7 @@ public abstract class TridentEntityRendererMixin extends EntityRenderer<TridentE
 
     @Inject(method = "render(Lnet/minecraft/entity/projectile/TridentEntity;FFLnet/minecraft/client/util/math/MatrixStack;" +
             "Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "HEAD"), cancellable = true)
-    private void render(TridentEntity entity, float f, float g, MatrixStack matrices,
+    private void gh$render(TridentEntity entity, float f, float g, MatrixStack matrices,
                         VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         if (!GrossHacksConfig.INSTANCE.tridentCIT) return;
         if (((MixinUtil) entity).gh$getTrident() == null) return;

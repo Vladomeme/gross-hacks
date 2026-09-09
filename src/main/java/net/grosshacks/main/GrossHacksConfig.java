@@ -70,19 +70,27 @@ public class GrossHacksConfig {
     public boolean extraButtons = true;
     public boolean dailiesButton = true;
     public boolean withdrawMenu = true;
-    public boolean disableInteractions = false;
-    public boolean loomAntighost = true;
+    public boolean disableToolInteractions = false;
+    public boolean disableBlockInteractions = false;
+    public boolean useInteractionExceptions = true;
+    public boolean barrelInteractions = true;
+    public boolean interactionKeyArmMode = false;
+    public boolean disablePotionMining = false;
+    public boolean loomAntighost = false;
     public boolean rebindDismounting = false;
     public boolean nightmareTimer = false;
     public int timeRemaining = 60;
 
     //QOL
-    public boolean offhandEquip = true;
+    public boolean offhandEquip = false;
     public boolean muteHorns = false;
+    public boolean hideFishingBobbers = false;
     public boolean disableGlowing = false;
+    public boolean masterworkGlowing = false;
+    public boolean chatCommands = false;
     public boolean blightAlert = false;
-    public boolean brightBlight = true;
-    public PotionInfo potionInfo = PotionInfo.Clucking;
+    public boolean brightBlight = false;
+    public PotionInfo potionInfo = PotionInfo.Disabled;
     public boolean cleanLogs = false;
     public boolean chatPacketFix = true;
 
@@ -92,7 +100,7 @@ public class GrossHacksConfig {
     public Screen create(Screen parent) {
         return YetAnotherConfigLib.createBuilder()
                 .save(this::write)
-                .title(Text.literal("Vlado's Gross Hacks."))
+                .title(Text.literal("Vlado's Gross Hacks"))
 
                 //TRIDENT CIT
                 .category(ConfigCategory.createBuilder()
@@ -200,14 +208,51 @@ public class GrossHacksConfig {
                                 .name(Text.literal("Disable tool interactions"))
                                 .description(OptionDescription.of(Text.literal(
                                         "Disables right click interactions with blocks when using an axe/shovel/hoe.")))
-                                .binding(false, () -> disableInteractions, newVal -> disableInteractions = newVal)
+                                .binding(false, () -> disableToolInteractions, newVal -> disableToolInteractions = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Disable block interactions"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Disables right click block interactions in survival mode areas when holding any item. " +
+                                                "Works best with '/bi' disabled.\n" +
+                                                "Chests and shulker boxes are excluded by default, for others - see interaction exceptions in the option below.")))
+                                .binding(false, () -> disableBlockInteractions, newVal -> disableBlockInteractions = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Enable interaction exceptions"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Allows interactions with following blocks: doors, trapdoors, fence gates, buttons, levers and anvils.")))
+                                .binding(true, () -> useInteractionExceptions, newVal -> useInteractionExceptions = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Enable barrel interactions"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Allows interactions with barrels.")))
+                                .binding(true, () -> barrelInteractions, newVal -> barrelInteractions = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Interaction key arm mode"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Pressing the interaction key will allow the next block interaction within 5 seconds.")))
+                                .binding(false, () -> interactionKeyArmMode, newVal -> interactionKeyArmMode = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Disable mining with splash potions"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Disables mining when holding a splash potion (intended for Alchemists).")))
+                                .binding(false, () -> disablePotionMining, newVal -> disablePotionMining = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
                                 .name(Text.literal("Loom anti-ghost"))
                                 .description(OptionDescription.of(Text.literal(
                                         "Prevents Worldshaper's Loom from going into ghost mode when placed on the ground.")))
-                                .binding(true, () -> loomAntighost, newVal -> loomAntighost = newVal)
+                                .binding(false, () -> loomAntighost, newVal -> loomAntighost = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
@@ -240,7 +285,7 @@ public class GrossHacksConfig {
                                 .name(Text.literal("Shift-click offhands"))
                                 .description(OptionDescription.of(Text.literal(
                                         "Allows you to equip offhands by shift-clicking on them in inventory.")))
-                                .binding(true, () -> offhandEquip, newVal -> offhandEquip = newVal)
+                                .binding(false, () -> offhandEquip, newVal -> offhandEquip = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
@@ -251,10 +296,32 @@ public class GrossHacksConfig {
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Hide fishing bobbers"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Hides fishing bobbers if they're stuck on you.")))
+                                .binding(false, () -> hideFishingBobbers, newVal -> hideFishingBobbers = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
                                 .name(Text.literal("Disable player glowing"))
                                 .description(OptionDescription.of(Text.literal(
                                         "Can be toggled with a keybind (Unset by default).")))
                                 .binding(false, () -> disableGlowing, newVal -> disableGlowing = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Disable Masterwork anvil glowing"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Disables masterwork anvil glowing in survival mode areas.")))
+                                .binding(false, () -> masterworkGlowing, newVal -> masterworkGlowing = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Enable chat commands"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Adds commands for sending hoverable info in chat: /mainhand (/show), /charms, /equipment")))
+                                .binding(false, () -> chatCommands, newVal -> chatCommands = newVal)
+                                .flag(OptionFlag.GAME_RESTART)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
@@ -268,14 +335,14 @@ public class GrossHacksConfig {
                                 .name(Text.literal("Bright Blight"))
                                 .description(OptionDescription.of(Text.literal(
                                         "Blight Wave is always rendered at max brightness.")))
-                                .binding(true, () -> brightBlight, newVal -> brightBlight = newVal)
+                                .binding(false, () -> brightBlight, newVal -> brightBlight = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<PotionInfo>createBuilder()
                                 .name(Text.literal("Potion throw info"))
                                 .description(OptionDescription.of(Text.literal(
-                                        "Whenever a potion is thrown, you'll see who (likely) threw it.")))
-                                .binding(PotionInfo.Clucking, () -> potionInfo, newVal -> potionInfo = newVal)
+                                        "Whenever a potion is thrown, you'll see who threw it.")))
+                                .binding(PotionInfo.Disabled, () -> potionInfo, newVal -> potionInfo = newVal)
                                 .controller(opt -> EnumControllerBuilder.create(opt)
                                         .enumClass(PotionInfo.class)).build())
 
@@ -289,7 +356,7 @@ public class GrossHacksConfig {
                         .option(Option.<Boolean>createBuilder()
                                 .name(Text.literal("Fix chat equipment packets"))
                                 .description(OptionDescription.of(Text.literal(
-                                        "Fixes decoding of packets containing show_item hover events." +
+                                        "Fixes decoding of packets containing show_item hover events. " +
                                                 "Should be disabled after 1.21 update.")))
                                 .binding(true, () -> chatPacketFix, newVal -> chatPacketFix = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
@@ -304,7 +371,7 @@ public class GrossHacksConfig {
                                         "Attempts to make stats & charms buttons use the same texture as " +
                                                 "current resource pack's recipe book button. If disabled, resource packs " +
                                                 "will be able to replace the textures.")))
-                                .binding(false, () -> generateTextures, newVal -> generateTextures = newVal)
+                                .binding(true, () -> generateTextures, newVal -> generateTextures = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
                         .build())
                 .build()

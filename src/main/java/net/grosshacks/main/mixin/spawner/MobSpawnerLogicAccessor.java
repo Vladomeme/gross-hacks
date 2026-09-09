@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface MobSpawnerLogicAccessor {
 
     @Accessor("requiredPlayerRange")
-    int getRequiredPlayerRange();
+    int gh$getRequiredPlayerRange();
 }
 
 

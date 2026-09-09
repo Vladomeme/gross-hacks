@@ -1,4 +1,4 @@
-package net.grosshacks.main.wallet;
+package net.grosshacks.main.feature.wallet;
 
 import net.grosshacks.main.util.Colours;
 import net.minecraft.client.MinecraftClient;

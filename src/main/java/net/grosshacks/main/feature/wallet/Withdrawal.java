@@ -1,4 +1,4 @@
-package net.grosshacks.main.wallet;
+package net.grosshacks.main.feature.wallet;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -23,16 +23,16 @@ public final class Withdrawal {
 
     public Withdrawal(String itemType, String itemName, int count) {
         ItemStack stack = Registries.ITEM.get(Identifier.of(itemType)).getDefaultStack();
-        this.left = WalletManager.getRPItem(stack, itemName, "", count);
+        this.left = WalletManager.getRPItem(stack, itemName, null, count);
         this.right = null;
     }
 
     public Withdrawal(String itemTypeLeft, String itemNameLeft, int countLeft, String itemTypeRight, String itemNameRight, int countRight) {
         ItemStack left = Registries.ITEM.get(Identifier.of(itemTypeLeft)).getDefaultStack();
-        this.left = WalletManager.getRPItem(left, itemNameLeft, "", countLeft);
+        this.left = WalletManager.getRPItem(left, itemNameLeft, null, countLeft);
 
         ItemStack right = Registries.ITEM.get(Identifier.of(itemTypeRight)).getDefaultStack();
-        this.right = WalletManager.getRPItem(right, itemNameRight, "", countRight);
+        this.right = WalletManager.getRPItem(right, itemNameRight, null, countRight);
     }
 
     public static Withdrawal fromProto(WithdrawalIO.ProtoWithdrawal proto) {

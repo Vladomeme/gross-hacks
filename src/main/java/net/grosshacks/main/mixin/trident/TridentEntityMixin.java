@@ -1,7 +1,7 @@
 package net.grosshacks.main.mixin.trident;
 
-import net.grosshacks.main.GrossHacks;
 import net.grosshacks.main.GrossHacksConfig;
+import net.grosshacks.main.feature.TridentProperties;
 import net.grosshacks.main.util.MixinUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.ComponentMap;
@@ -33,7 +33,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
     @Unique float tridentScale = GrossHacksConfig.INSTANCE.tridentScale;
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    private void tick(CallbackInfo ci) {
+    private void gh$tick(CallbackInfo ci) {
         if (!GrossHacksConfig.INSTANCE.tridentCIT || checked) return;
         getTridentInfo();
         checked = true;
@@ -41,7 +41,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
 
     @Unique
     private void getTridentInfo() {
-        if (hasCustomName() && GrossHacks.modelledTridents.contains(Objects.requireNonNull(getCustomName()).getString())) {
+        if (hasCustomName() && TridentProperties.modelledTridents.contains(Objects.requireNonNull(getCustomName()).getString())) {
             trident = null;
             return;
         }
@@ -79,7 +79,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
 
     @Unique
     public void checkCustomScale() {
-        Float scale = GrossHacks.tridentScales.get(trident.getName().getString());
+        Float scale = TridentProperties.tridentScales.get(trident.getName().getString());
         if (scale != null) tridentScale = scale;
     }
 
@@ -96,7 +96,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
         if (nbt.contains("plain")) {
             String name = nbt.getCompound("plain").getCompound("display").getString("Name");
 
-            if (GrossHacks.projectileList.contains(name.toLowerCase()
+            if (TridentProperties.projectileList.contains(name.toLowerCase()
                     .replace("(", "").replace(")", "").replace("-", "").replace("'", ""))) {
                 nbt.getCompound("plain").getCompound("display").putString("Name", name + "_projectile");
             }
@@ -106,7 +106,7 @@ public abstract class TridentEntityMixin extends PersistentProjectileEntity impl
         if (nbt.contains("display")) {
             String name = nbt.getCompound("display").getString("Name");
 
-            if (GrossHacks.projectileList.contains(name.toLowerCase()
+            if (TridentProperties.projectileList.contains(name.toLowerCase()
                     .replace("(", "").replace(")", "").replace("-", "").replace("'", ""))) {
                 nbt.getCompound("display").putString("Name", name + "_projectile");
             }

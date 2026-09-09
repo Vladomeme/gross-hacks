@@ -9,7 +9,10 @@
   "client": [
     "BlockRenderManagerMixin",
     "BossBarHudMixin",
-    "ClientPlayNetworkHandlerMixin",
+    "ClientPlayerInteractionManagerMixin",
+    "clean_logs.ClientPlayNetworkHandlerMixin",
+    "clean_logs.ScoreboardMixin",
+    "ClientWorldAccessor",
     "ClientWorldMixin",
     "FishingBobberEntityRendererMixin",
     "KeyBindingAccessor",

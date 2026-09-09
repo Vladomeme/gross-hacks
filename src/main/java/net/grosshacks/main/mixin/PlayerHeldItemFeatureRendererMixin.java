@@ -14,11 +14,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//config -> hideHandheld
 @Mixin(PlayerHeldItemFeatureRenderer.class)
 public class PlayerHeldItemFeatureRendererMixin {
 
 	@Inject(method = "renderItem", cancellable = true, at = @At(value = "HEAD"))
-	private void renderItem(LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm,
+	private void gh$renderItem(LivingEntity entity, ItemStack stack, ModelTransformationMode transformationMode, Arm arm,
 							MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
 		if (GrossHacksConfig.INSTANCE.hideHandheld && !entity.equals(MinecraftClient.getInstance().player))
 			ci.cancel();

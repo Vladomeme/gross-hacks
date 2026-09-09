@@ -1,4 +1,4 @@
-package net.grosshacks.main.wallet;
+package net.grosshacks.main.feature.wallet;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

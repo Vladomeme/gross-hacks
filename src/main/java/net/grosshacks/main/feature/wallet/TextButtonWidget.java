@@ -1,4 +1,4 @@
-package net.grosshacks.main.wallet;
+package net.grosshacks.main.feature.wallet;
 
 import net.grosshacks.main.GrossHacks;
 import net.handbook.main.config.HandbookConfig;
@@ -45,7 +45,7 @@ public class TextButtonWidget extends ButtonWidget {
     }
 
     private int getColor(int mouseX, int mouseY) {
-        if (GrossHacks.handbookAvailable) {
+        if (GrossHacks.handbookLoaded) {
             if (!active) return HandbookConfig.INSTANCE.buttonNegativeColor;
             return isMouseOver(mouseX, mouseY) ? HandbookConfig.INSTANCE.buttonActiveColor : type.equals(Type.Normal) ?
                     HandbookConfig.INSTANCE.buttonInactiveColor : type.equals(Type.Positive) ?

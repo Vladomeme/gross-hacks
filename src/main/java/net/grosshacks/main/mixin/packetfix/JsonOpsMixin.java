@@ -12,9 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(JsonOps.class)
 public class JsonOpsMixin {
 
+	//forces a default boolean value whenever it's missing
 	@Inject(method = "getBooleanValue(Lcom/google/gson/JsonElement;)Lcom/mojang/serialization/DataResult;", remap = false, cancellable = true,
 			at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/DataResult;error(Ljava/util/function/Supplier;)Lcom/mojang/serialization/DataResult;"))
-	private void forceBooleanInput(JsonElement input, CallbackInfoReturnable<DataResult<Boolean>> cir) {
+	private void gh$getBooleanValue(JsonElement input, CallbackInfoReturnable<DataResult<Boolean>> cir) {
 		if (GrossHacksConfig.INSTANCE.chatPacketFix) cir.setReturnValue(DataResult.success(false));
 	}
 }

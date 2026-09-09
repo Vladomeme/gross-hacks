@@ -20,12 +20,11 @@ import java.util.List;
 @Mixin(PacketCodecDispatcher.class)
 public class PacketCodecDispatcherMixin<B extends ByteBuf, V, T> {
 
-	@Shadow @Final
-	private List<PacketCodecDispatcher.PacketType<B, V, T>> packetTypes;
+	@Shadow @Final private List<PacketCodecDispatcher.PacketType<B, V, T>> packetTypes;
 
 	@Inject(method = "decode(Lio/netty/buffer/ByteBuf;)Ljava/lang/Object;",
 			at = @At(value = "INVOKE", target = "Lio/netty/handler/codec/DecoderException;<init>(Ljava/lang/String;)V"), cancellable = true)
-	private void replaceCodec(B byteBuf, CallbackInfoReturnable<V> cir, @Local int i) {
+	private void gh$replaceCodec(B byteBuf, CallbackInfoReturnable<V> cir, @Local int i) {
 		if (!GrossHacksConfig.INSTANCE.chatPacketFix) return;
 		if (packetTypes.get(i).id.equals("clientbound/minecraft:system_chat")) {
 			MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal("[Gross Hacks] Couldn't fix message decoding. Do not report this.")

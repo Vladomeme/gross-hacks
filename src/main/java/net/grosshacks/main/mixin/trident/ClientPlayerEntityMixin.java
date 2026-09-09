@@ -20,7 +20,7 @@ public abstract class ClientPlayerEntityMixin extends LivingEntity implements Mi
     @Unique ItemStack lastTrident;
 
     @Inject(method = "tick", at = @At(value = "HEAD"))
-    private void tick(CallbackInfo ci) {
+    private void gh$tick(CallbackInfo ci) {
         if (GrossHacksConfig.INSTANCE.tridentCIT && getMainHandStack().getItem().equals(Items.TRIDENT))
             lastTrident = getMainHandStack();
     }
