@@ -76,6 +76,8 @@ public class GrossHacksConfig {
     public boolean barrelInteractions = true;
     public boolean interactionKeyArmMode = false;
     public boolean disablePotionMining = false;
+    @SuppressWarnings("CanBeFinal")
+    public boolean dropKeyAttackCooldown = false;
     public boolean loomAntighost = false;
     public boolean rebindDismounting = false;
     public boolean nightmareTimer = false;
@@ -247,6 +249,13 @@ public class GrossHacksConfig {
                                         "Disables mining when holding a splash potion (intended for Alchemists).")))
                                 .binding(false, () -> disablePotionMining, newVal -> disablePotionMining = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
+
+//                        .option(Option.<Boolean>createBuilder()
+//                                .name(Text.literal("Preserve attack cooldown"))
+//                                .description(OptionDescription.of(Text.literal(
+//                                        "Prevents drop key from resetting attack cooldown client-side.")))
+//                                .binding(false, () -> dropKeyAttackCooldown, newVal -> dropKeyAttackCooldown = newVal)
+//                                .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
                                 .name(Text.literal("Loom anti-ghost"))
