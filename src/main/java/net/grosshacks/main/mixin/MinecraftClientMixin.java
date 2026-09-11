@@ -42,5 +42,11 @@ public abstract class MinecraftClientMixin {
 				}
 			}
 		}
+		if (GrossHacksConfig.INSTANCE.disableLucidityGlowing && entity instanceof DisplayEntity.BlockDisplayEntity display) {
+			if (display.getData() != null && display.getData().blockState().getBlock().equals(Blocks.TINTED_GLASS)
+					&& display.getRenderState() != null	&& display.getRenderState().glowColorOverride() == -12996274) {
+				cir.setReturnValue(false);
+			}
+		}
 	}
 }

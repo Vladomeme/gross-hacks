@@ -89,6 +89,7 @@ public class GrossHacksConfig {
     public boolean hideFishingBobbers = false;
     public boolean disableGlowing = false;
     public boolean masterworkGlowing = false;
+    public boolean disableLucidityGlowing = false;
     public boolean chatCommands = false;
     public boolean blightAlert = false;
     public boolean brightBlight = false;
@@ -323,6 +324,13 @@ public class GrossHacksConfig {
                                 .description(OptionDescription.of(Text.literal(
                                         "Disables masterwork anvil glowing in survival mode areas.")))
                                 .binding(false, () -> masterworkGlowing, newVal -> masterworkGlowing = newVal)
+                                .controller(TickBoxControllerBuilder::create).build())
+
+                        .option(Option.<Boolean>createBuilder()
+                                .name(Text.literal("Disable Lucidity effect"))
+                                .description(OptionDescription.of(Text.literal(
+                                        "Disables spawner glowing effect from Lucidity.")))
+                                .binding(false, () -> disableLucidityGlowing, newVal -> disableLucidityGlowing = newVal)
                                 .controller(TickBoxControllerBuilder::create).build())
 
                         .option(Option.<Boolean>createBuilder()
